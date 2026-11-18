@@ -1,0 +1,834 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<meta charset="utf-8">
+<title>Petit Lenormand</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=IM+Fell+English:ital@0;1&family=IM+Fell+English+SC&display=swap">
+<style>
+/* Layout: a bottle-green parlour table. Masthead, compact spread console, the table (spread above, fanned deck below), then the reading ledger. */
+:root{
+  color-scheme: dark;
+  --velvet:#0b1411; --velvet-2:#13261e; --velvet-3:#1c3a2d;
+  --gold:#c8a85b; --gold-dim:#7f6d3c; --bone:#e9ddbf; --muted:#a29a7e;
+  --parch:#ece0c2; --parch-hi:#f6eed8; --parch-edge:#cfbb90;
+  --ink:#2d1f15; --oxblood:#7d2a22; --woad:#34506a; --ochre:#8a6418; --gilt:#c08f2e;
+  --sage:#5d6b47; --skin:#ecd3ab; --stone:#9b9383;
+  --back:#6b1a26; --back-2:#350a12;
+  --shadow:rgba(0,0,0,.55);
+  --f-display:"IM Fell English","Iowan Old Style",Georgia,serif;
+  --f-sc:"IM Fell English SC","IM Fell English",Georgia,serif;
+  --f-body:"Cormorant Garamond","Iowan Old Style",Georgia,serif;
+  --dur:.65s;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{background:var(--velvet)}
+body{color:var(--bone);font-family:var(--f-body);font-size:18px;line-height:1.5;
+  background:radial-gradient(ellipse 80% 50% at 50% 0%, var(--velvet-3) 0%, transparent 70%), var(--velvet);min-height:100%}
+.wrap{max-width:1180px;margin:0 auto;padding-block:22px 64px;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));
+  display:flex;flex-direction:column;gap:18px}
+.home{align-self:flex-start;font-family:var(--f-sc);letter-spacing:.12em;font-size:.8rem;color:var(--gold-dim);text-decoration:none}
+.home:hover{color:var(--gold)}
+.masthead{text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px}
+.eyebrow{font-family:var(--f-sc);letter-spacing:.16em;font-size:.82rem;color:var(--gold);margin:0}
+.masthead h1{font-family:var(--f-display);font-weight:400;font-size:clamp(2.6rem,7vw,4.4rem);line-height:1;margin:0;color:var(--bone);text-wrap:balance}
+.masthead h1 i{color:var(--gold)}
+.rule{display:flex;align-items:center;gap:12px;color:var(--gold-dim);width:min(360px,80%)}
+.rule::before,.rule::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--gold-dim),transparent)}
+.rule svg{width:18px;height:18px;flex:none}
+.lede{margin:0;color:var(--muted);font-style:italic;max-width:58ch;text-wrap:balance}
+
+.console{display:flex;flex-direction:column;align-items:center;gap:10px;border-top:1px solid rgba(200,168,91,.25);border-bottom:1px solid rgba(200,168,91,.25);padding-block:10px}
+fieldset{border:0;margin:0;padding:0;min-width:0;max-width:100%}
+.tiles{display:flex;gap:2px;overflow-x:auto;max-width:100%;justify-content:safe center;scrollbar-width:thin;scrollbar-color:var(--gold-dim) transparent;padding:2px}
+.tile{position:relative;flex:none;width:90px;display:flex;flex-direction:column;align-items:center;gap:5px;padding:8px 4px 7px;border-radius:4px;border:1px solid transparent;cursor:pointer;color:var(--muted);transition:color .2s,background .2s,border-color .2s;user-select:none}
+.tile input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.tile svg{width:62px;height:40px;display:block;overflow:visible}
+.tile svg rect{fill:transparent;stroke:var(--gold-dim);stroke-width:1;transition:fill .2s,stroke .2s}
+.tname{font-family:var(--f-sc);font-size:.74rem;letter-spacing:.05em;line-height:1.12;text-align:center;text-wrap:balance}
+.tcount{position:absolute;top:3px;right:6px;font-family:var(--f-display);font-size:.72rem;color:var(--gold-dim);font-variant-numeric:tabular-nums}
+.tile:hover{color:var(--bone)}
+.tile:hover svg rect{stroke:var(--gold)}
+.tile:has(input:checked){color:var(--gold);border-color:rgba(200,168,91,.6);background:rgba(200,168,91,.08)}
+.tile:has(input:checked) svg rect{fill:rgba(200,168,91,.28);stroke:var(--gold)}
+.tile:has(input:checked) .tcount{color:var(--gold)}
+.tile:has(input:focus-visible){outline:2px solid var(--bone);outline-offset:1px}
+fieldset:disabled .tile{opacity:.5;cursor:default}
+.bar{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;justify-content:center}
+.stepper{display:inline-flex;align-items:center;gap:2px;border:1px solid var(--gold-dim);border-radius:999px;padding:2px 4px;color:var(--muted);font-size:.95rem}
+.stepper button{width:26px;height:26px;border-radius:50%;border:0;background:transparent;color:var(--gold);font:inherit;font-size:1.2rem;line-height:1;cursor:pointer}
+.stepper button:hover:not(:disabled){background:rgba(200,168,91,.15)}
+.stepper button:disabled{opacity:.35;cursor:default}
+.stepper output{min-width:1.6em;text-align:center;font-family:var(--f-display);color:var(--bone);font-variant-numeric:tabular-nums}
+.stepper span{padding-right:8px}
+.actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.btn{font-family:var(--f-sc);letter-spacing:.1em;font-size:.98rem;padding:9px 18px;border-radius:3px;border:1px solid var(--gold);background:transparent;color:var(--gold);cursor:pointer;transition:background .2s,color .2s,opacity .2s}
+.btn:hover:not(:disabled){background:rgba(200,168,91,.12)}
+.btn.primary{background:var(--gold);color:var(--velvet)}
+.btn.primary:hover:not(:disabled){background:var(--bone);border-color:var(--bone)}
+.btn:disabled{opacity:.38;cursor:default}
+.btn:focus-visible,.stepper button:focus-visible{outline:2px solid var(--bone);outline-offset:2px}
+.status{text-align:center;margin:0;font-style:italic;color:var(--bone);min-height:1.5em}
+.status b{font-style:normal;font-family:var(--f-display);font-weight:400;color:var(--gold)}
+
+.table{position:relative;border:1px solid var(--gold-dim);border-radius:6px;padding:6px;
+  background:radial-gradient(ellipse 70% 60% at 50% 40%, var(--velvet-3) 0%, var(--velvet-2) 45%, var(--velvet) 100%);
+  box-shadow:inset 0 0 80px rgba(0,0,0,.6), 0 20px 50px rgba(0,0,0,.4)}
+.table::before{content:"";position:absolute;inset:5px;border:1px solid rgba(200,168,91,.22);border-radius:3px;pointer-events:none}
+.stage{position:relative;width:100%;overflow:hidden;transition:height .5s ease}
+.deck-label{position:absolute;left:0;right:0;text-align:center;font-family:var(--f-sc);letter-spacing:.18em;font-size:.78rem;color:var(--gold-dim);pointer-events:none;display:flex;align-items:center;gap:12px;padding:0 24px}
+.deck-label::before,.deck-label::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(200,168,91,.35),transparent)}
+.slot{position:absolute;left:0;top:0;width:var(--cw);height:calc(var(--cw)*1.45);border:1px dashed rgba(200,168,91,.45);border-radius:calc(var(--cw)*.07);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:calc(var(--cw)*.1);gap:3px;color:var(--gold-dim);text-align:center;z-index:1;pointer-events:none;transition:transform .5s ease}
+.slot-num{font-family:var(--f-display);font-size:calc(var(--cw)*.22);line-height:1;color:var(--gold)}
+.slot-name{font-family:var(--f-sc);font-size:max(9px,calc(var(--cw)*.105));letter-spacing:.06em;line-height:1.1;padding:0 6%}
+
+.card{position:absolute;left:0;top:0;width:var(--cw);height:calc(var(--cw)*1.45);font-size:calc(var(--cw)*.1);
+  transform-origin:50% 50%;perspective:900px;transition:transform var(--dur) cubic-bezier(.3,.7,.2,1);-webkit-tap-highlight-color:transparent}
+.stage.instant .card{transition:none!important}
+.card-inner{position:absolute;inset:0;transform-style:preserve-3d;transition:transform calc(var(--dur)*1.15) cubic-bezier(.4,.1,.2,1)}
+.card.revealed .card-inner{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:calc(var(--cw)*.07);overflow:hidden;box-shadow:0 0 0 1px rgba(0,0,0,.45),0 .3em .9em var(--shadow)}
+.back{background:radial-gradient(ellipse at 50% 50%, var(--back) 0%, var(--back-2) 85%);color:var(--gold)}
+.back svg{display:block;width:100%;height:100%}
+.front{transform:rotateY(180deg)}
+.card.in-fan{cursor:pointer}
+.stage:not(.full):not(.busy) .card.in-fan:hover{--lift:-14px}
+.stage.full .card.in-fan,.stage.busy .card.in-fan{cursor:default}
+.stage.full .card.in-fan .back{filter:brightness(.55) saturate(.8)}
+.card.drawn{cursor:pointer}
+.card:focus-visible{outline:none}
+.card:focus-visible .face{box-shadow:0 0 0 2px var(--bone),0 .3em .9em var(--shadow)}
+.front{background:radial-gradient(ellipse at 50% 42%, var(--parch-hi) 0%, var(--parch) 55%, var(--parch-edge) 100%);color:var(--ink);padding:.38em;display:flex}
+.frame{flex:1;min-height:0;border:.08em solid var(--ink);outline:.04em solid var(--ink);outline-offset:-.22em;border-radius:.2em;display:flex;flex-direction:column;align-items:center;padding:.3em .3em .2em}
+.top{display:flex;justify-content:space-between;align-items:flex-start;width:100%;line-height:1}
+.pc{display:inline-flex;flex-direction:column;align-items:center;background:#fffaf0;border:.06em solid var(--ink);border-radius:.15em;padding:.1em .18em .08em;font-size:.82em;min-width:1.45em;gap:.05em}
+.pc b{font-family:var(--f-display);font-weight:400}
+.pc i{font-style:normal;font-family:"Apple Symbols","Segoe UI Symbol","DejaVu Sans",serif}
+.pc.red{color:var(--oxblood)}
+.num{font-family:var(--f-display);font-size:1.15em}
+.art{flex:1;min-height:0;width:100%;display:flex;align-items:center;justify-content:center;padding:.1em 0}
+.art svg{width:100%;height:100%;display:block}
+.cname{font-family:var(--f-sc);font-size:1em;line-height:1.05;text-align:center;border-top:.06em solid var(--ink);padding-top:.22em;width:100%}
+
+.reading{display:flex;flex-direction:column;gap:14px}
+.reading-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px;border-bottom:1px solid var(--gold-dim);padding-bottom:8px}
+.reading h2{font-family:var(--f-display);font-weight:400;font-size:1.9rem;margin:0;color:var(--bone)}
+.reading-meta{font-family:var(--f-sc);letter-spacing:.12em;font-size:.82rem;color:var(--gold);font-variant-numeric:tabular-nums}
+.ledger{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px 28px}
+.entry{display:grid;grid-template-columns:2.2em 1fr;gap:4px 12px;padding:12px 0;border-bottom:1px solid rgba(200,168,91,.18);min-width:0}
+.entry-num{font-family:var(--f-display);font-size:1.7rem;line-height:1;color:var(--gold);text-align:center}
+.entry-body{min-width:0;display:flex;flex-direction:column;gap:3px}
+.pos-name{font-family:var(--f-sc);letter-spacing:.08em;font-size:.95rem;color:var(--gold)}
+.pos-desc{font-size:.95rem;color:var(--muted);font-style:italic}
+.card-line{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px;margin-top:4px}
+.card-title{font-family:var(--f-display);font-size:1.3rem;color:var(--bone);line-height:1.15}
+.pill{font-family:var(--f-sc);letter-spacing:.1em;font-size:.72rem;padding:1px 9px 2px;border-radius:999px;border:1px solid var(--gold-dim);color:var(--muted)}
+.pill.good{border-color:var(--gold);color:var(--gold)}
+.pill.hard{border-color:#b0574a;color:#e09a8c}
+.card-meta{font-size:.9rem;color:var(--muted)}
+.card-keys{font-size:1.05rem;color:var(--bone);line-height:1.45}
+.card-look{font-size:.92rem;color:var(--muted);font-style:italic}
+.card-look b{font-style:normal;font-family:var(--f-sc);font-weight:400;letter-spacing:.08em;color:var(--gold-dim);font-size:.82rem}
+.waiting{font-size:.95rem;color:var(--gold-dim);margin-top:4px}
+.linkish{background:none;border:0;padding:0;color:var(--gold);font:inherit;font-size:.92rem;text-decoration:underline;text-underline-offset:3px;cursor:pointer;align-self:flex-start;margin-top:2px}
+.linkish:focus-visible{outline:2px solid var(--bone);outline-offset:2px}
+footer{text-align:center;color:var(--gold-dim);font-size:.9rem;font-style:italic}
+
+.modal{position:fixed;inset:0;z-index:1000;background:rgba(4,8,6,.85);display:flex;align-items:center;justify-content:center;
+  padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));overflow-y:auto}
+.modal-card{position:relative;background:var(--velvet-2);border:1px solid var(--gold-dim);border-radius:6px;max-width:800px;width:100%;padding:28px;display:flex;flex-wrap:wrap;gap:28px;align-items:center;justify-content:center;box-shadow:0 30px 80px rgba(0,0,0,.6);margin:auto}
+.modal-art{flex:none;width:250px;height:363px;position:relative}
+.modal-art .card{position:relative;transition:none}
+.modal-art .front{transform:none}
+.modal-text{flex:1 1 280px;min-width:0;display:flex;flex-direction:column;gap:8px}
+.modal-text h3{font-family:var(--f-display);font-weight:400;font-size:2rem;margin:0;line-height:1.1;color:var(--bone)}
+.meaning{padding:10px 14px;border:1px solid rgba(200,168,91,.3);border-radius:4px;margin-top:4px}
+.meaning h4{margin:0 0 2px;font-family:var(--f-sc);letter-spacing:.12em;font-weight:400;font-size:.82rem;color:var(--gold)}
+.meaning p{margin:0}
+.modal-close{position:absolute;top:8px;right:10px;background:none;border:0;color:var(--gold);font-size:1.9rem;line-height:1;cursor:pointer;padding:4px 10px;font-family:var(--f-display)}
+.modal-close:focus-visible{outline:2px solid var(--bone)}
+@media (max-width:640px){
+  body{font-size:17px}
+  .btn{padding:8px 13px;font-size:.9rem}
+  .tiles{justify-content:flex-start}
+  .tile{width:80px}
+  .modal-card{padding:22px 18px}
+  .modal-art{width:190px;height:276px}
+}
+@media (prefers-reduced-motion: reduce){ .stage{transition:none} }
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <pattern id="lat" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <path d="M0 0H9M0 0V9" stroke="#c8a85b" stroke-opacity=".32" stroke-width=".6"/>
+      <circle cx="0" cy="0" r=".9" fill="#c8a85b" fill-opacity=".55"/>
+    </pattern>
+    <symbol id="cardback" viewBox="0 0 100 145"></symbol>
+  </defs>
+</svg>
+
+<div class="wrap">
+  <a class="home" id="homeLink" href="#" target="_blank" rel="noopener" hidden>&larr; The Reading Room</a>
+  <header class="masthead">
+    <p class="eyebrow">Thirty-six cards &middot; The parlour oracle</p>
+    <h1>Petit <i>Lenormand</i></h1>
+    <div class="rule" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M10 1Q10 10 19 10Q10 10 10 19Q10 10 1 10Q10 10 10 1Z" fill="currentColor"/></svg></div>
+    <p class="lede">Choose a spread, shuffle the deck, and pull your cards from the fan. Lenormand is read upright, in lines and boxes, each card colouring its neighbours.</p>
+  </header>
+
+  <section class="console" aria-label="Reading options">
+    <fieldset id="spreads">
+      <legend style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Choose a spread</legend>
+      <div class="tiles" id="tiles"></div>
+    </fieldset>
+    <div class="bar">
+      <div class="stepper" id="customWrap" hidden>
+        <button type="button" id="minusBtn" aria-label="Fewer cards">&minus;</button>
+        <output id="customOut" aria-live="polite">5</output>
+        <button type="button" id="plusBtn" aria-label="More cards">+</button>
+        <span>cards</span>
+      </div>
+      <div class="actions">
+        <button class="btn primary" id="shuffleBtn" type="button">Shuffle &amp; Spread</button>
+        <button class="btn" id="randomBtn" type="button">Draw at random</button>
+        <button class="btn" id="revealBtn" type="button">Reveal all</button>
+      </div>
+    </div>
+  </section>
+
+  <p class="status" id="status" aria-live="polite"></p>
+  <div class="table"><div class="stage" id="stage"></div></div>
+
+  <section class="reading" aria-labelledby="readingTitle">
+    <div class="reading-head"><h2 id="readingTitle">The Reading</h2><span class="reading-meta" id="readingMeta"></span></div>
+    <ol class="ledger" id="ledger"></ol>
+  </section>
+  <footer>Tap a turned card to see it up close.</footer>
+</div>
+
+<div class="modal" id="modal" hidden role="dialog" aria-modal="true" aria-labelledby="mName">
+  <div class="modal-card">
+    <button class="modal-close" id="modalClose" type="button" aria-label="Close">&times;</button>
+    <div class="modal-art" id="mArt"></div>
+    <div class="modal-text">
+      <p class="eyebrow" id="mPos"></p>
+      <h3 id="mName"></h3>
+      <div class="card-meta" id="mMeta"></div>
+      <div class="card-look" id="mLook"></div>
+      <div class="meaning"><h4>Keywords</h4><p id="mKeys"></p></div>
+      <div class="meaning"><h4>As a person</h4><p id="mPerson"></p></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+const HUB_URL = 'https://claude.ai/artifact/Po8kk9dCVPBqjpSk8Ucaxc';
+const R = 1.45;
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const M = REDUCED ? 0.04 : 1;
+document.documentElement.style.setProperty('--dur', (0.65 * Math.max(M, 0.05)) + 's');
+const f = n => +(+n).toFixed(2);
+const sleep = ms => new Promise(r => setTimeout(r, ms * M));
+const rand = n => { const a = new Uint32Array(1); crypto.getRandomValues(a); return a[0] % n; };
+const jitter = s => (Math.random() * 2 - 1) * s;
+const dot = s => s.split(', ').join(' · ');
+if(HUB_URL){ const h = document.getElementById('homeLink'); h.href = HUB_URL; h.hidden = false; }
+
+/* ---------- Drawing kit (art box 100 × 100) ---------- */
+const INK='var(--ink)', OX='var(--oxblood)', WO='var(--woad)', OC='var(--ochre)', GI='var(--gilt)', SA='var(--sage)',
+      SK='var(--skin)', PH='var(--parch-hi)', PE='var(--parch-edge)', ST='var(--stone)';
+const RUST='#b4652d', BARK='#6d4c30', NIGHT='#1d2547', STEEL='#d4cfc2';
+const P = (d, fill='none', x='') => `<path d="${d}" fill="${fill}" ${x}/>`;
+const C = (cx, cy, r, fill='none', x='') => `<circle cx="${f(cx)}" cy="${f(cy)}" r="${r}" fill="${fill}" ${x}/>`;
+const E = (cx, cy, rx, ry, fill='none', x='') => `<ellipse cx="${f(cx)}" cy="${f(cy)}" rx="${rx}" ry="${ry}" fill="${fill}" ${x}/>`;
+const L = (x1, y1, x2, y2, x='') => `<line x1="${f(x1)}" y1="${f(y1)}" x2="${f(x2)}" y2="${f(y2)}" ${x}/>`;
+const RC = (x, y, w, h, fill='none', e='') => `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${fill}" ${e}/>`;
+const starPts = (cx, cy, Ro, ri, n, rot=-90) => { let s=''; for(let i=0;i<2*n;i++){ const a=(rot+i*180/n)*Math.PI/180, r=i%2?ri:Ro; s+=`${f(cx+r*Math.cos(a))},${f(cy+r*Math.sin(a))} `; } return s; };
+const STAR = (cx, cy, Ro, ri, n, fill, x='stroke-width=".5"') => `<polygon points="${starPts(cx,cy,Ro,ri,n)}" fill="${fill}" ${x}/>`;
+const rays = (cx, cy, r1, r2, n, x='', alt=false) => { let s=''; for(let i=0;i<n;i++){ const a=i*2*Math.PI/n, rr=alt&&i%2?r1+(r2-r1)*.55:r2; s+=L(cx+r1*Math.sin(a), cy-r1*Math.cos(a), cx+rr*Math.sin(a), cy-rr*Math.cos(a), x); } return s; };
+const head = (x, y, r=4.5) => C(x, y, r, SK);
+const lem = (cx, cy, w, x) => P(`M${cx} ${cy} C${f(cx-w*.3)} ${f(cy-w*.5)} ${cx-w} ${f(cy-w*.5)} ${cx-w} ${cy} C${cx-w} ${f(cy+w*.5)} ${f(cx-w*.3)} ${f(cy+w*.5)} ${cx} ${cy} C${f(cx+w*.3)} ${f(cy-w*.5)} ${cx+w} ${f(cy-w*.5)} ${cx+w} ${cy} C${cx+w} ${f(cy+w*.5)} ${f(cx+w*.3)} ${f(cy+w*.5)} ${cx} ${cy}Z`, 'none', x);
+const leaf = (x, y, rot, l=4, fill=SA) => `<ellipse cx="${f(x)}" cy="${f(y)}" rx="${l}" ry="${f(l*.42)}" transform="rotate(${f(rot)} ${f(x)} ${f(y)})" fill="${fill}" stroke-width=".5"/>`;
+const waves = (y, x0=0, x1=100, c=WO) => { let d=`M${x0} ${y}`; for(let x=x0;x<x1;x+=6) d+=' q1.5 -2 3 0 t3 0'; return P(d,'none',`stroke="${c}" stroke-width=".8"`); };
+const grass = pts => pts.map(([x,y])=>P(`M${x} ${y} q1 -5 3 -7 M${x} ${y} q-1 -4 -3 -5`,'none','stroke="var(--sage)" stroke-width=".9"')).join('');
+const cloudShape = (x, y, s, fill, ex='') => `<g transform="translate(${x} ${y}) scale(${s})">${P("M-16 6 c-4 0 -4 -6 0 -7 c0 -6 7 -8 10 -4 c3 -6 11 -5 12 1 c5 -1 8 4 5 7 c3 2 1 5 -2 5 h-24z",fill,ex)}</g>`;
+const bird = (x, y, dir, col) => `<g transform="translate(${x} ${y}) scale(${dir} 1)">${P("M-8 4 L-18 10 L-12 1Z",col)}${E(0,2,10,7,col)}${C(7,-6,5,col)}${P("M11.5 -7 L17 -5.4 L11.5 -4Z",GI)}${C(8,-7,.9,INK,'stroke="none"')}${P("M-5 -1 Q2 -3 6 4",'none','stroke-width=".7"')}${L(-2,9,-2,13)}${L(2,9,2,13)}</g>`;
+const mouse = (x, y, dir, s=1) => `<g transform="translate(${x} ${y}) scale(${dir*s} ${s})">${P("M-8 2 q-10 2 -12 -6",'none')}${E(0,0,8,5,ST)}${C(7,-3,3.4,ST)}${C(5,-7,2.2,'#d8b8a8')}${P("M10 -3 l3 1 l-3 1z",INK)}${C(8,-4,.6,INK,'stroke="none"')}</g>`;
+const fish = (x, y, dir, col) => `<g transform="translate(${x} ${y}) scale(${dir} 1)">${P("M12 0 L22 -9 L20 0 L22 9Z",col)}${P("M-4 -8 Q2 -15 7 -6Z",col)}${P("M-18 0 Q-4 -12 12 0 Q-4 12 -18 0Z",col)}${P("M-6 -4 q2 4 0 8 M0 -5 q2 5 0 10 M6 -4 q2 4 0 8",'none','stroke-width=".5"')}${C(-12,-1.6,1.3,PH,'stroke-width=".5"')}${C(-12,-1.6,.6,INK,'stroke="none"')}</g>`;
+const lily = (x, y, s, rot=0) => `<g transform="translate(${x} ${y}) rotate(${rot}) scale(${s})">${P("M0 0 C-6 -4 -12 -14 -5 -21 C-3 -12 -1 -8 0 0Z",PH)}${P("M0 0 C6 -4 12 -14 5 -21 C3 -12 1 -8 0 0Z",PH)}${P("M0 0 C-3 -8 -3 -17 0 -24 C3 -17 3 -8 0 0Z",PH)}${[-4,0,4].map(d=>L(0,-2,d,-14,'stroke="var(--ochre)" stroke-width=".5"')+C(d,-14.5,.9,OC,'stroke="none"')).join('')}</g>`;
+const stroked = (d, w, col) => P(d,'none',`stroke="var(--ink)" stroke-width="${w+1.8}"`) + P(d,'none',`stroke="${col}" stroke-width="${w}"`);
+
+const DRAW = [
+// 1 Rider
+() => L(6,84,94,84) + P("M4 78 q4 -3 8 0 M10 70 q4 -3 8 0",'none','stroke="var(--stone)"')
+  + L(30,62,16,74,'stroke-width="2.2"') + L(36,65,32,82,'stroke-width="2.2"') + L(60,65,72,80,'stroke-width="2.2"') + L(66,62,82,68,'stroke-width="2.2"')
+  + P("M27 54 q-10 -1 -16 8",'none','stroke-width="2"')
+  + E(47,58,21,10,OC) + P("M62 52 L73 34 L83 38 L80 45 L70 62Z", OC) + C(78,39,.9,INK,'stroke="none"') + P("M64 50 L74 36",'none','stroke-width="2.2"') + P("M74 35 l1 -4 l2 4",'none')
+  + L(46,52,43,66,'stroke-width="1.8"') + P("M41 30 L52 30 L54 52 L40 52Z", WO) + L(52,36,72,44,'stroke-width="1.2"')
+  + head(46.5,25,4.4) + RC(42,12,9,9,INK) + L(39.5,21,53.5,21,'stroke-width="1.8"') + L(42,18.5,51,18.5,'stroke="var(--oxblood)" stroke-width="1.2"'),
+// 2 Clover
+() => { const hl = a => `<g transform="translate(50 42) rotate(${a})"><g transform="translate(0 -13)">${P("M0 12 C-14 2 -11 -12 -3 -10 C-1 -9 0 -6 0 -5 C0 -6 1 -9 3 -10 C11 -12 14 2 0 12Z",SA)}${P("M0 11 V-4",'none','stroke-width=".5"')}${P("M-6 -2 Q0 2 6 -2",'none','stroke="#e9e3c8" stroke-width=".8" stroke-opacity=".7"')}</g></g>`;
+  return P("M50 92 Q46 72 50 44",'none','stroke="var(--sage)" stroke-width="2.4"') + hl(0) + hl(120) + hl(240) + C(50,42,1.6,GI)
+  + grass([[12,92],[20,92],[30,93],[70,93],[80,92],[88,92]]) + L(6,93,94,93)
+  + P("M70 26 q2.2 3.4 0 5.2 q-2.2 -1.8 0 -5.2z", WO, 'stroke-width=".4"') + STAR(20,20,3,1,4,GI) + STAR(84,16,2.4,.8,4,GI); },
+// 3 Ship
+() => L(40,64,40,10,'stroke-width="1.4"') + L(62,64,62,18,'stroke-width="1.4"')
+  + P("M41 14 L58 18 L58 36 L41 34Z",PH) + P("M41 38 L60 40 L60 60 L41 60Z",PH) + P("M63 22 L78 26 L78 40 L63 38Z",PH) + P("M63 42 L80 44 L80 60 L63 60Z",PH)
+  + P("M40 10 l11 3 l-11 3z",OX) + P("M62 18 l9 2.5 l-9 2.5z",OX)
+  + P("M14 62 H86 L76 78 H24Z", OC) + L(20,68,82,68,'stroke-width=".6"') + [30,42,54,66].map(x=>C(x,72.5,1.6,INK,'stroke="none"')).join('')
+  + RC(0,79,100,21,WO,'fill-opacity=".35" stroke="none"') + waves(80) + waves(88) + waves(95)
+  + P("M12 24 q3 -3 6 0 q3 -3 6 0 M82 12 q2 -2 4 0 q2 -2 4 0",'none'),
+// 4 House
+() => RC(62,26,7,16,OX) + P("M65.5 24 q-5 -6 1 -10 q6 -4 0 -10",'none','stroke="var(--stone)" stroke-width="1.2"')
+  + P("M22 50 L50 24 L78 50Z", OX) + RC(28,50,44,36,PH) + C(50,40,3.4,GI,'fill-opacity=".6"')
+  + P("M45 86 V71 A5 5 0 0 1 55 71 V86Z", OC) + C(53,79,.8,INK,'stroke="none"')
+  + [32,59].map(x=>RC(x,56,9,9,GI,'fill-opacity=".55"')+L(x+4.5,56,x+4.5,65,'stroke-width=".6"')+L(x,60.5,x+9,60.5,'stroke-width=".6"')).join('')
+  + L(87,86,87,64,'stroke="var(--ochre)" stroke-width="2"') + C(87,56,9,SA) + L(13,86,13,68,'stroke="var(--ochre)" stroke-width="1.6"') + C(13,62,7,SA)
+  + [4,9,18,23,78,82,92,96].map(x=>L(x,86,x,79)).join('') + L(2,82,26,82) + L(74,82,98,82)
+  + L(2,86,98,86) + P("M47 86 L42 98 M53 86 L58 98",'none','stroke="var(--ochre)"'),
+// 5 Tree
+() => P("M44 90 Q47 70 44 54 L56 54 Q53 70 56 90Z", BARK) + P("M44 90 q-6 2 -10 6 M56 90 q6 2 10 6 M50 90 v6",'none','stroke-width="1.4"')
+  + [[50,38,20],[32,46,12],[68,46,12],[40,24,12],[60,26,12],[50,16,10]].map(([x,y,r])=>C(x,y,r,SA,'stroke-width=".6"')).join('')
+  + [[42,32],[58,38],[50,22],[34,48],[66,48],[46,46],[62,26],[38,22]].map(([x,y])=>C(x,y,1.3,OX,'stroke="none"')).join('')
+  + L(6,94,94,94) + grass([[12,94],[20,94],[80,94],[88,94]]),
+// 6 Clouds
+() => C(72,30,11,GI) + rays(72,30,13,17.5,12,'stroke="var(--gilt)"',true)
+  + cloudShape(68,44,1.5,PH,'stroke="var(--woad)" stroke-width=".6"') + cloudShape(34,36,1.9,'#4b4e58','stroke-width=".5"') + cloudShape(48,52,1.4,ST,'stroke-width=".6"')
+  + [18,26,34,42,52].map(x=>L(x,62,x-4,76,'stroke="var(--woad)" stroke-width="1.1"')).join('') + P("M38 58 L34 66 H39 L35 77",'none','stroke="var(--gilt)" stroke-width="1.6"')
+  + P("M4 88 Q30 82 54 88 T100 86",'none') + waves(94,0,100),
+// 7 Snake
+() => { const b = "M28 82 C8 80 12 60 34 60 C60 60 72 76 54 80 C40 83 34 72 46 68 C58 65 64 74 72 70 C84 64 80 46 70 44";
+  return L(6,88,94,88) + E(86,85,6,3,ST) + grass([[14,88],[22,88],[92,88]])
+  + P(b,'none','stroke="var(--ink)" stroke-width="8"') + P(b,'none','stroke="var(--sage)" stroke-width="6"') + P(b,'none','stroke="var(--ochre)" stroke-width="1.8" stroke-dasharray="1.5 4"')
+  + E(68,41,7,4.6,SA,'transform="rotate(-20 68 41)"') + C(66,39,1,INK,'stroke="none"') + P("M61.5 43 l-6 0 m6 0 l-5 3",'none','stroke="var(--oxblood)" stroke-width="1"'); },
+// 8 Coffin
+() => P("M38 14 L62 14 L70 32 L62 88 L38 88 L30 32Z", BARK) + P("M40 17 L60 17 L66 32 L59.5 85 L40.5 85 L34 32Z",'none','stroke="var(--parch-edge)" stroke-width=".6"')
+  + L(50,26,50,62,'stroke="var(--parch-hi)" stroke-width="2.4"') + L(42,36,58,36,'stroke="var(--parch-hi)" stroke-width="2.4"')
+  + RC(78,56,6,28,PH) + L(81,56,81,52) + P("M81 52 q-3 -4 0 -9 q3 5 0 9z",GI) + RC(75,84,12,3,GI)
+  + leaf(20,82,-40,5) + C(18,75,3.4,PH) + C(25,77,2.6,PH) + L(6,90,94,90),
+// 9 Bouquet
+() => [[40,80,46,46],[46,82,42,30],[50,82,50,26],[54,82,60,32],[60,80,56,46],[50,82,36,44],[50,82,66,44]].map(([a,b,c,d])=>L(a,b,c,d,'stroke="var(--sage)" stroke-width="1.2"')).join('')
+  + [[28,46,-30],[72,46,30],[34,60,-50],[66,60,50]].map(([x,y,r])=>leaf(x,y,r,7)).join('')
+  + [[50,22,OX],[37,29,GI],[63,29,WO],[44,39,PH],[56,39,OX],[31,44,OX],[69,44,GI],[50,48,WO]].map(([x,y,c])=>[0,72,144,216,288].map(a=>{const r=a*Math.PI/180;return C(x+3.4*Math.sin(r),y-3.4*Math.cos(r),3,c,'stroke-width=".5"');}).join('')+C(x,y,1.6,GI,'stroke-width=".4"')).join('')
+  + P("M42 64 Q50 60 58 64 L56 72 Q50 69 44 72Z", PH) + P("M48 74 l-6 16 M52 74 l6 16",'none','stroke="var(--oxblood)" stroke-width="2"') + lem(50,72,8,'stroke="var(--oxblood)" stroke-width="2"'),
+// 10 Scythe
+() => L(6,90,94,90) + [10,16,22,28].map(x=>L(x,90,x+2,70,'stroke="var(--ochre)"')+E(x+2,67,1.8,4.4,OC,'stroke-width=".5"')).join('')
+  + [[40,88],[54,86],[68,89]].map(([x,y])=>L(x,y,x+14,y-3,'stroke="var(--ochre)"')+E(x+16,y-3.5,4.4,1.6,OC,'stroke-width=".5"')).join('')
+  + stroked("M30 92 Q38 52 58 16", 2.4, 'var(--ochre)') + L(35,62,46,66,'stroke-width="2.6"')
+  + P("M56 18 C72 12 88 20 94 36 C82 28 70 26 58 26Z", STEEL) + P("M60 21 C72 17 84 23 90 31",'none','stroke="#ffffff" stroke-opacity=".7" stroke-width=".7"'),
+// 11 Whip
+() => L(6,92,94,92) + Array.from({length:7},(_,i)=>L(40+i*1.2,88,22+i*6,12+(i%3)*5,'stroke="var(--ochre)" stroke-width="1.1"')).join('')
+  + [[27,22,-30],[41,16,20],[52,24,40],[33,34,-40],[58,32,30]].map(([x,y,r])=>leaf(x,y,r,3)).join('')
+  + RC(37,66,14,4,OX,'transform="rotate(-12 44 68)"')
+  + L(70,90,78,58,`stroke="${BARK}" stroke-width="3"`) + P("M78 58 C94 48 92 26 74 32 C60 36 62 54 76 50 C84 48 86 40 80 38",'none','stroke-width="1.4"'),
+// 12 Birds
+() => P("M4 66 Q50 56 96 70",'none',`stroke="${BARK}" stroke-width="3.4"`) + leaf(14,60,-30,4) + leaf(88,62,30,4) + leaf(74,58,-20,3) + leaf(22,64,30,3)
+  + bird(36,50,1,WO) + bird(64,50,-1,OC)
+  + P("M44 28 q3 -4 6 0 M52 22 q3 -4 6 0 M40 20 q2 -3 4 0",'none','stroke-width=".8"'),
+// 13 Child
+() => L(6,90,94,90) + L(46,78,45,90,'stroke-width="1.8"') + L(54,78,55,90,'stroke-width="1.8"')
+  + P("M43 46 L57 46 L64 80 L36 80Z", PH) + [[44,60],[52,66],[58,74],[42,74],[50,56]].map(([x,y])=>C(x,y,1.4,OX)).join('') + RC(42,46,16,4,OX)
+  + L(44,52,36,62,'stroke-width="1.4"') + L(56,52,66,64,'stroke-width="1.4"')
+  + P("M43.5 37 Q50 24 56.5 37 L57 44 L43 44Z", OC) + head(50,38,6.2) + C(48,37,.7,INK,'stroke="none"') + C(52,37,.7,INK,'stroke="none"') + P("M48.5 41 q1.5 1 3 0",'none','stroke-width=".6"')
+  + C(77,74,12,'none','stroke="var(--ochre)" stroke-width="2"') + L(66,64,74,70,'stroke-width="1.2"')
+  + [[14,88],[22,86],[88,88]].map(([x,y])=>L(x,y+2,x,y-2,'stroke="var(--sage)"')+C(x,y-4,2.4,GI)).join(''),
+// 14 Fox
+() => L(6,88,94,88) + P("M60 84 Q92 86 88 56 Q80 76 62 74Z", RUST) + P("M84 64 Q90 62 88 56 Q86 64 82 66Z",PH)
+  + P("M34 86 Q28 58 44 46 L58 46 Q68 62 64 86Z", RUST) + P("M44 52 Q51 60 47 82 L40 82 Q38 64 44 52Z", PH)
+  + P("M42 48 L38 24 L47 34 L55 26 L56 44 Q66 46 73 50 Q62 56 50 54Z", RUST)
+  + P("M42 46 L40 30 L45 36Z",INK,'stroke="none" fill-opacity=".5"') + C(73,50,1.3,INK,'stroke="none"') + C(56,42,1.1,INK,'stroke="none"')
+  + L(42,84,40,88,'stroke-width="1.4"') + L(56,84,58,88,'stroke-width="1.4"'),
+// 15 Bear
+() => L(6,92,94,92) + P("M70 92 L82 70 L94 92Z",SA,'fill-opacity=".6"') + grass([[10,92],[18,92]])
+  + E(42,91,6,2.6,BARK) + E(58,91,6,2.6,BARK) + E(50,64,18,24,BARK) + E(50,68,10,14,'#9a7550','stroke="none"')
+  + E(31,58,5,12,BARK,'transform="rotate(25 31 58)"') + E(69,58,5,12,BARK,'transform="rotate(-25 69 58)"')
+  + C(40,22,4.6,BARK) + C(60,22,4.6,BARK) + C(50,32,12,BARK) + E(50,37,5.5,4.4,'#b08a62') + E(50,35,2.4,1.6,INK) + C(45,29,1.1,INK,'stroke="none"') + C(55,29,1.1,INK,'stroke="none"'),
+// 16 Stars
+() => RC(4,4,92,92,NIGHT,'rx="3"') + C(50,38,24,GI,'fill-opacity=".14" stroke="none"') + STAR(50,38,17,6,8,GI)
+  + [[16,14],[82,16],[24,58],[78,54],[12,36],[88,38],[34,18],[66,12],[40,64],[62,66],[20,76],[84,72]].map(([x,y],i)=>STAR(x,y,i%3?2.2:3.6,i%3?.8:1.3,i%2?4:8,GI,'stroke="none"')).join('')
+  + P("M4 96 V84 Q30 74 54 84 Q76 92 96 80 V96Z", '#0d1229','stroke="none"'),
+// 17 Stork
+() => RC(4,78,92,18,WO,'fill-opacity=".35" stroke="none"') + waves(82,4,96) + waves(90,4,96)
+  + [12,16,20,84,88].map((x,i)=>L(x,90,x+(i%2?2:-2),62,'stroke="var(--sage)" stroke-width="1.2"')+E(x+(i%2?2:-2),60,1.4,4,BARK,'stroke="none"')).join('')
+  + L(46,56,46,88,'stroke="var(--oxblood)" stroke-width="1.6"') + P("M52 56 L56 70 L47 72",'none','stroke="var(--oxblood)" stroke-width="1.6"')
+  + E(48,50,15,9,PH,'transform="rotate(-15 48 50)"') + P("M34 55 Q44 58 58 50 L54 46 Q44 52 36 51Z", INK)
+  + stroked("M58 44 Q66 30 62 20", 2.6, 'var(--parch-hi)') + C(62,19,4,PH) + C(63.5,18,.8,INK,'stroke="none"') + P("M65.5 18 L84 22 L65.5 21Z", OX),
+// 18 Dog
+() => L(6,88,94,88) + P("M38 80 q-12 0 -14 -12",'none','stroke-width="2.6"')
+  + P("M38 86 Q32 62 46 50 L60 50 Q68 64 66 86Z", PE) + E(44,86,5,2.4,PE) + E(60,86,5,2.4,PE)
+  + RC(48,50,13,4,OX,'rx="1"') + C(55,56,2,GI)
+  + C(56,38,11,PE) + E(65,44,7,5,PE) + C(71,42,1.8,INK) + C(58,35,1.1,INK,'stroke="none"') + P("M64 48 q3 2 6 0",'none')
+  + P("M48 32 Q42 36 44 50 Q50 46 52 34Z", OC),
+// 19 Tower
+() => P("M20 94 L28 84 L72 84 L80 94Z", ST,'fill-opacity=".7"') + RC(36,22,28,62,ST) + P("M33 22 V14 H38 V18 H43 V14 H48 V18 H52 V14 H57 V18 H62 V14 H67 V22Z", ST)
+  + Array.from({length:6},(_,r)=>L(36,32+r*9,64,32+r*9,'stroke-width=".4"')).join('')
+  + L(50,14,50,2,'stroke-width="1.2"') + P("M50 2 l10 3 l-10 3z", OX)
+  + [[46,30],[52,46],[46,62]].map(([x,y])=>RC(x,y,3,8,INK)).join('') + P("M45 84 V75 A5 5 0 0 1 55 75 V84Z", INK)
+  + P("M10 30 q3 -3 6 0 q3 -3 6 0 M76 40 q2 -2 4 0 q2 -2 4 0",'none') + L(4,94,96,94),
+// 20 Garden
+() => L(4,60,96,60,'stroke-width=".6"') + P("M42 96 L48 60 L52 60 L58 96Z", PE)
+  + [[10,46],[22,50],[78,50],[90,46]].map(([x,y])=>L(x,y+14,x,y+18)+E(x,y,5,14,SA)).join('')
+  + E(50,72,16,5,ST) + E(50,72,13,3,WO,'fill-opacity=".55" stroke="none"') + RC(48,56,4,15,ST) + E(50,56,7,2,ST)
+  + P("M50 55 q-7 -7 -11 2 M50 55 q7 -7 11 2 M50 54 v-9",'none','stroke="var(--woad)" stroke-width="1.2"')
+  + RC(68,80,16,3,BARK) + L(70,83,70,88) + L(82,83,82,88)
+  + [[26,84,OX],[33,86,WO]].map(([x,y,c])=>P(`M${x-3} ${y-8} L${x+3} ${y-8} L${x+4} ${y+4} L${x-4} ${y+4}Z`,c)+head(x,y-11,2.6)).join('')
+  + [[8,92],[16,95],[86,93],[93,96]].map(([x,y])=>C(x,y,2,OX)).join(''),
+// 21 Mountain
+() => C(84,18,6,GI) + P("M8 18 q3 -3 6 0 q3 -3 6 0",'none')
+  + P("M4 66 L20 44 L32 56 L48 38 L60 50 L78 32 L96 52 V70 H4Z", WO,'fill-opacity=".3" stroke-width=".6"')
+  + P("M6 92 L36 24 L52 52 L64 36 L94 92Z", ST)
+  + P("M36 24 L28 42 L34 38 L38 45 L44 37Z", PH) + P("M64 36 L58 46 L63 44 L67 48 L70 44Z", PH)
+  + P("M36 24 L42 56 L36 92",'none','stroke-width=".6"') + P("M2 92 Q30 86 50 92 T98 90",'none'),
+// 22 Crossroads
+() => L(4,52,96,52,'stroke-width=".6"') + [[10,44],[90,44],[34,46]].map(([x,y])=>L(x,y+6,x,y+8)+C(x,y,6,SA)).join('')
+  + P("M40 96 L48 70 Q30 60 14 52 L24 52 Q40 58 50 65 Q60 58 76 52 L86 52 Q70 60 52 70 L60 96Z", PE)
+  + L(68,92,68,58,`stroke="${BARK}" stroke-width="2.4"`) + P("M68 61 H84 L88 64 L84 67 H68Z", PE) + P("M68 70 H54 L50 73 L54 76 H68Z", PE)
+  + L(72,64,82,64,'stroke-width=".5"') + L(56,73,66,73,'stroke-width=".5"'),
+// 23 Mice
+() => L(6,88,94,88) + P("M30 86 L70 86 L70 70 L36 60Z", GI) + P("M36 60 L70 70 L70 86",'none')
+  + [[46,76,3],[58,80,2.4],[40,70,2],[62,73,1.6]].map(([x,y,r])=>C(x,y,r,OC,'stroke-width=".5"')).join('')
+  + mouse(18,82,1) + mouse(82,80,-1) + mouse(54,54,1,.8) + [[10,86],[92,86],[26,72]].map(([x,y])=>E(x,y,1.6,.9,OC)).join(''),
+// 24 Heart
+() => rays(50,54,30,38,24,'stroke="var(--gilt)" stroke-width=".7"',true)
+  + P("M50 84 C14 62 18 26 36 26 C44 26 49 32 50 38 C51 32 56 26 64 26 C82 26 86 62 50 84Z", OX)
+  + P("M30 40 Q32 32 40 31",'none','stroke="#ffffff" stroke-opacity=".55" stroke-width="2"')
+  + [[50,12],[12,52],[88,52],[28,90],[72,90]].map(([x,y])=>STAR(x,y,3,1,4,GI)).join(''),
+// 25 Ring
+() => [[22,28],[80,26],[86,74],[16,78]].map(([x,y])=>STAR(x,y,3.4,1,4,GI)).join('')
+  + E(50,62,24,12,'none','stroke="var(--ink)" stroke-width="7"') + E(50,62,24,12,'none','stroke="var(--gilt)" stroke-width="5"') + P("M30 58 Q50 51 70 58",'none','stroke="#fff3c8" stroke-width="1" stroke-opacity=".7"')
+  + P("M44 50 L42 43 M56 50 L58 43",'none','stroke="var(--gilt)" stroke-width="2"')
+  + P("M40 40 L44 32 L56 32 L60 40 L50 52Z", PH) + P("M40 40 H60 M44 32 L47 40 L50 52 L53 40 L56 32 M47 40 L50 32 L53 40",'none','stroke-width=".6"'),
+// 26 Book
+() => P("M24 34 L24 40 L40 86 L40 80Z", '#5a1d18') + P("M40 80 L80 70 L80 76 L40 86Z", PH) + P("M24 34 L64 24 L80 70 L40 80Z", OX)
+  + P("M30 38 L62 30 L74 66 L42 74Z",'none','stroke="var(--gilt)" stroke-width=".8"') + STAR(52,52,7,3,8,GI,'stroke="none"')
+  + RC(75,46,9,7,GI,'transform="rotate(-14 79 49)"') + [[12,20],[88,18]].map(([x,y])=>STAR(x,y,3,1,4,GI)).join('') + L(6,92,94,92),
+// 27 Letter
+() => RC(16,36,64,42,PH) + P("M16 36 L48 60 L80 36",'none') + P("M16 78 L40 58 M80 78 L56 58",'none','stroke-width=".7"')
+  + C(48,60,6.4,OX) + STAR(48,60,3.4,1.4,6,'#a8463a','stroke="none"')
+  + P("M66 30 Q86 8 92 6 Q84 22 70 34Z", PH) + L(92,6,62,40,'stroke-width=".7"') + L(62,40,58,46,'stroke-width="1.2"')
+  + P("M22 88 q6 -4 12 0 t12 0",'none','stroke="var(--woad)" stroke-width=".8"'),
+// 28 Man
+() => P("M20 96 Q22 64 50 62 Q78 64 80 96Z", INK) + P("M44 62 L50 80 L56 62Z", PH) + P("M47 65 L50 72 L53 65Z", OX)
+  + P("M40 64 L46 82 M60 64 L54 82",'none','stroke="var(--parch-edge)" stroke-width=".7"')
+  + RC(46,52,8,10,SK) + head(50,44,11) + P("M39 42 Q40 32 50 32 Q60 32 61 42 Q56 36 50 37 Q44 36 39 42Z", BARK)
+  + C(46,44,1,INK,'stroke="none"') + C(54,44,1,INK,'stroke="none"') + P("M45 50 Q50 47 55 50",'none',`stroke="${BARK}" stroke-width="1.8"`)
+  + RC(40,12,20,20,INK) + E(50,32,16,2.6,INK) + RC(40,26,20,3,OX),
+// 29 Woman
+() => P("M20 96 Q22 66 50 64 Q78 66 80 96Z", WO) + P("M36 67 Q50 84 64 67 Q50 73 36 67Z", SK) + RC(46,54,8,13,SK,'stroke="none"')
+  + [[42,71],[46,74],[50,75],[54,74],[58,71]].map(([x,y])=>C(x,y,1.2,GI,'stroke-width=".4"')).join('')
+  + P("M37 52 Q34 30 50 28 Q66 30 63 52 Q58 40 50 39 Q42 40 37 52Z", OC) + head(50,46,10)
+  + C(46.5,45,1,INK,'stroke="none"') + C(53.5,45,1,INK,'stroke="none"') + C(50,51,1.3,OX,'stroke="none"')
+  + P("M33 47 Q33 21 50 21 Q67 21 67 47 Q62 30 50 30 Q38 30 33 47Z", PH) + P("M35 49 Q42 58 48 61 M65 49 Q58 58 52 61",'none','stroke="var(--oxblood)" stroke-width="1.6"') + C(50,24,2.6,OX) + C(40,52,1.2,GI),
+// 30 Lily
+() => P("M50 94 Q50 66 50 40 M50 94 Q44 76 34 54 M50 94 Q58 78 66 56",'none','stroke="var(--sage)" stroke-width="1.8"')
+  + [[40,78,-30,10],[60,80,30,10],[46,86,-60,8],[56,88,60,8]].map(([x,y,r,l])=>leaf(x,y,r,l)).join('')
+  + lily(50,40,1.25) + lily(34,54,1,-22) + lily(66,56,1,22) + L(6,94,94,94),
+// 31 Sun
+() => STAR(50,42,36,22,16,GI,'fill-opacity=".45" stroke-width=".6"') + C(50,42,20,GI)
+  + C(43,38,1.6,INK,'stroke="none"') + C(57,38,1.6,INK,'stroke="none"') + P("M42 49 Q50 56 58 49",'none','stroke-width="1.1"') + P("M50 39 L48.5 45 L51.5 45",'none','stroke-width=".7"')
+  + P("M4 84 Q50 74 96 84 V96 H4Z",SA,'fill-opacity=".5"') + P("M4 90 Q50 82 96 90",'none','stroke="var(--ochre)"'),
+// 32 Moon
+() => RC(4,4,92,92,NIGHT,'rx="3"') + C(52,40,26,GI,'fill-opacity=".1" stroke="none"')
+  + P("M56 16 A24 24 0 1 0 56 64 A12 24 0 1 1 56 16Z", GI) + C(41,36,1.1,INK,'stroke="none"') + P("M40 46 q2 1.4 4 0",'none','stroke-width=".7"')
+  + [[18,16],[82,20],[76,48],[16,52],[86,34],[26,30]].map(([x,y],i)=>STAR(x,y,i%2?2:3,i%2?.7:1.1,4,GI,'stroke="none"')).join('')
+  + RC(4,72,92,24,'#0d1229','stroke="none"') + [[40,78,10],[44,84,8],[38,90,6]].map(([x,y,w])=>L(x,y,x+w,y,'stroke="var(--gilt)" stroke-width="1.2"')).join(''),
+// 33 Key
+() => `<g transform="rotate(-38 50 50)">${C(50,16,12,'none','stroke="var(--ink)" stroke-width="6.4"')}${C(50,16,12,'none','stroke="var(--gilt)" stroke-width="4.6"')}${[0,90,180,270].map(d=>{const a=d*Math.PI/180;return C(50+4*Math.sin(a),16-4*Math.cos(a),2.6,GI);}).join('')}${C(50,16,1.8,GI)}${RC(47,28,6,56,GI)}${RC(43,30,14,3,GI)}${RC(53,68,12,5,GI)}${RC(53,77,9,5,GI)}</g>`
+  + P("M30 30 q-6 6 -4 16 M30 30 q-2 8 2 16",'none','stroke="var(--oxblood)" stroke-width="1.6"') + C(30,30,2,OX),
+// 34 Fish
+() => RC(4,4,92,92,WO,'fill-opacity=".16" stroke="none" rx="3"') + waves(12,4,96) + fish(42,38,1,WO) + fish(58,66,-1,OC)
+  + [[70,30,2],[74,24,1.4],[30,60,1.8],[26,54,1.2]].map(([x,y,r])=>C(x,y,r,'none','stroke="var(--woad)" stroke-width=".7"')).join('')
+  + P("M14 96 q-4 -10 2 -18 q-4 -6 0 -12 M86 96 q4 -10 -2 -18",'none','stroke="var(--sage)" stroke-width="1.6"'),
+// 35 Anchor
+() => RC(4,74,92,22,WO,'fill-opacity=".35" stroke="none"') + waves(78,4,96) + waves(88,4,96)
+  + stroked("M50 24 V84", 4, 'var(--stone)') + stroked("M34 32 H66", 3.4, 'var(--stone)') + stroked("M22 62 Q28 84 50 84 Q72 84 78 62", 4, 'var(--stone)')
+  + P("M17 67 L22 55 L29 64Z",ST) + P("M83 67 L78 55 L71 64Z",ST)
+  + C(50,17,6,'none','stroke="var(--ink)" stroke-width="4.4"') + C(50,17,6,'none','stroke="var(--stone)" stroke-width="2.6"')
+  + P("M50 17 C30 20 70 34 46 42 C30 48 68 56 50 64",'none','stroke="var(--ochre)" stroke-width="1.8"'),
+// 36 Cross
+() => rays(50,38,20,42,24,'stroke="var(--gilt)" stroke-width=".6" stroke-opacity=".75"',true)
+  + P("M4 96 Q50 70 96 96Z", SA,'fill-opacity=".55"') + RC(45,12,10,72,BARK) + RC(30,26,40,9,BARK)
+  + C(50,30.5,3,GI) + [[38,88],[60,86],[44,91]].map(([x,y])=>C(x,y,2,PH)).join('') + P("M50 84 Q46 90 40 96",'none','stroke="var(--ochre)" stroke-dasharray="2 2"')
+];
+
+/* ---------- Data ---------- */
+const CARDS = [
+ ['Rider','9','♥',1,'news, arrival, a visitor, speed, messages, movement, new developments, a quick start','a messenger, an athlete, an admirer, a young man on the move','a horseman at full gallop'],
+ ['Clover','6','♦',1,'luck, opportunity, light-heartedness, small happiness, chance, hope, a short window, optimism','an optimist, a gambler, a cheerful soul','a three-leaf clover with dew'],
+ ['Ship','10','♠',0,'travel, distance, longing, adventure, trade, journeys, change of place, foreign lands, inheritance','a traveller, a foreigner, a merchant','a tall ship under full sail'],
+ ['House','K','♥',1,'home, family, security, stability, property, tradition, comfort, foundations, privacy','a homemaker, a landlord, a family member','a cottage with smoke from the chimney'],
+ ['Tree','7','♥',0,'health, growth, roots, patience, longevity, spirituality, slow development, ancestry, wellbeing','a healer, a steady person, an elder','an old tree with deep roots'],
+ ['Clouds','K','♣',-1,'confusion, uncertainty, doubt, mood swings, unclear situations, worry, passing trouble, hidden facts','a moody or unreliable person, someone hiding something','dark and light clouds, rain, the sun behind'],
+ ['Snake','Q','♣',-1,'complication, desire, deceit, detour, jealousy, temptation, cleverness, a rival, a winding path','a rival, a cunning or seductive woman, an expert','a coiled serpent'],
+ ['Coffin','9','♦',-1,'ending, illness, closure, grief, exhaustion, transformation, letting go, stagnation','someone ill, grieving or withdrawn','a closed coffin and a burning candle'],
+ ['Bouquet','Q','♠',1,'gift, pleasure, invitation, compliment, beauty, gratitude, joy, surprise, charm','a charming, gracious, artistic person','a ribboned bouquet of flowers'],
+ ['Scythe','J','♦',-1,'sudden cut, decision, danger, accident, separation, harvest, quick action, warning','a surgeon, a decisive or harsh person','a scythe over cut wheat'],
+ ['Whip','J','♣',-1,'conflict, arguments, repetition, discipline, tension, passion, debate, punishment, exercise','a critic, an athlete, an argumentative person','a birch rod and a coiled whip'],
+ ['Birds','7','♦',0,'talk, chatter, nervousness, a couple, phone calls, gossip, excitement, siblings, short trips','a chatterbox, a pair of people, siblings','two birds chattering on a branch'],
+ ['Child','J','♠',1,'new beginning, innocence, something small, youth, trust, play, naivety, a fresh start','a child, a youthful or naive person','a child with a hoop'],
+ ['Fox','9','♣',-1,'cunning, self-interest, work, caution, mistrust, strategy, trickery, the wrong path','an employee, a clever operator, someone not to trust','a sly fox with a bushy tail'],
+ ['Bear','10','♣',0,'power, strength, finances, protection, authority, a boss, a mother, appetite, jealousy','a boss, a mother figure, a powerful protector','a standing bear'],
+ ['Stars','6','♥',1,'hope, guidance, clarity, inspiration, wishes, spirituality, success, many things, networks','an astrologer, an idealist, a guide','a great star in the night sky'],
+ ['Stork','Q','♥',1,'change, movement, improvement, relocation, pregnancy, return, progress, renewal','someone who moves on, a returning person','a stork wading among reeds'],
+ ['Dog','10','♥',1,'loyalty, friendship, trust, devotion, companionship, reliability, a helper, faithfulness','a friend, a loyal companion, a follower','a faithful dog in a red collar'],
+ ['Tower','6','♠',0,'institutions, authority, isolation, ambition, law, government, solitude, long life','an official, a loner, an institution','a tall stone tower with a pennant'],
+ ['Garden','8','♠',1,'the public, society, community, gatherings, networks, events, social life, an audience','a public figure, a host, a crowd','a park with a fountain and strollers'],
+ ['Mountain','8','♣',-1,'obstacle, delay, challenge, blockage, endurance, distance, enemies, a standstill','a stubborn or distant person, an enemy','snow-capped peaks'],
+ ['Crossroads','Q','♦',0,'choice, options, decision, alternatives, parting ways, doubt, freedom, more than one path','an indecisive person, a choice between people','a fork in the road with a signpost'],
+ ['Mice','7','♣',-1,'loss, theft, stress, worry, decay, erosion, depletion, illness, gnawing doubt','a thief, a nervous person, a worrier','mice gnawing at a cheese'],
+ ['Heart','J','♥',1,'love, affection, romance, compassion, warmth, passion, kindness, reconciliation','a lover, a kind-hearted person','a radiant red heart'],
+ ['Ring','A','♣',1,'commitment, contract, marriage, partnership, promise, cycle, union, agreement','a partner, a spouse, a business associate','a gold ring set with a stone'],
+ ['Book','10','♦',0,'secrets, knowledge, study, mystery, education, the unknown, documents, research','a teacher, a student, a secretive person','a closed book with a gilded clasp'],
+ ['Letter','7','♠',0,'message, document, communication, news in writing, paperwork, email, a contract','a correspondent, a writer','a sealed envelope and a quill'],
+ ['Man','A','♥',0,'the querent if male, a male partner, masculine energy, action, assertiveness, a man of note','the gentleman of the reading','a gentleman in a top hat'],
+ ['Woman','A','♠',0,'the querent if female, a female partner, feminine energy, receptivity, intuition, a woman of note','the lady of the reading','a lady in a bonnet'],
+ ['Lily','K','♠',1,'peace, harmony, maturity, virtue, sensuality, family, wisdom, retirement, purity','an older person, a wise mentor, a family elder','white lilies in bloom'],
+ ['Sun','A','♦',1,'success, energy, victory, warmth, confidence, happiness, strength, clarity, good fortune','a successful, radiant person','a blazing sun over the fields'],
+ ['Moon','8','♥',1,'recognition, emotions, intuition, fame, romance, creativity, honour, the subconscious','an artist, a public figure, a sensitive person','a crescent moon over still water'],
+ ['Key','8','♦',1,'solution, answer, certainty, opening, success, importance, unlocking, destiny','a key person, a problem-solver','an ornate golden key'],
+ ['Fish','K','♦',1,'money, abundance, business, independence, flow, value, trade, wealth, depth','a businessperson, an entrepreneur','two fish swimming in opposite directions'],
+ ['Anchor','9','♠',1,'stability, endurance, perseverance, security, work, goals reached, staying power, the long haul','a dependable, steadfast person','an anchor wound with rope'],
+ ['Cross','6','♣',-1,'burden, fate, faith, suffering, duty, karma, trial, spirituality, destiny','a believer, a burdened person','a wooden cross on a hill']
+];
+const SUITNAME = {'♥':'Hearts','♦':'Diamonds','♠':'Spades','♣':'Clubs'};
+const RANKNAME = {A:'Ace',K:'King',Q:'Queen',J:'Jack'};
+const TONE = {'1':['good','Favourable'],'0':['','Neutral'],'-1':['hard','Challenging']};
+const DECK = CARDS.map((c, i) => ({id:i, n:i+1, name:c[0], rank:c[1], suit:c[2], tone:c[3], keys:c[4], person:c[5], look:c[6]}));
+const IDS = DECK.map(c => c.id), TOTAL = DECK.length;
+const playing = c => `${RANKNAME[c.rank] || c.rank} of ${SUITNAME[c.suit]}`;
+
+(function buildBack(){
+  const sp = (x,y,s) => `<path d="M${x} ${y-s}Q${x} ${y} ${x+s} ${y}Q${x} ${y} ${x} ${y+s}Q${x} ${y} ${x-s} ${y}Q${x} ${y} ${x} ${y-s}Z" fill="currentColor"/>`;
+  document.getElementById('cardback').innerHTML = `<g fill="none" stroke="currentColor" stroke-width=".9">
+    <rect x="4" y="4" width="92" height="137" rx="5"/>
+    <rect x="8" y="8" width="84" height="129" rx="3" fill="url(#lat)" stroke-width=".45"/>
+    <ellipse cx="50" cy="72.5" rx="25" ry="34" fill="#4a1119" stroke-width="1"/>
+    <ellipse cx="50" cy="72.5" rx="21.5" ry="30.5" stroke-width=".4"/>
+    <polygon points="${starPts(50,64,12,4.4,8)}" fill="currentColor" stroke="none"/>
+    <path d="M40 84 a10 10 0 0 0 20 0 a12 10 0 0 1 -20 0z" fill="currentColor" stroke="none"/>
+    ${sp(50,96,2.6)}${sp(50,46,2)}${sp(16,16,3.4)}${sp(84,16,3.4)}${sp(16,129,3.4)}${sp(84,129,3.4)}</g>`;
+})();
+const frontHTML = c => `<div class="frame"><div class="top"><span class="pc${c.suit==='♥'||c.suit==='♦'?' red':''}"><b>${c.rank}</b><i>${c.suit}︎</i></span><span class="num">${c.n}</span></div>
+  <div class="art"><svg viewBox="0 0 100 100" aria-hidden="true"><g stroke="var(--ink)" stroke-width=".9" stroke-linejoin="round" stroke-linecap="round">${DRAW[c.id]()}</g></svg></div>
+  <div class="cname">${c.name}</div></div>`;
+const metaLine = c => `Card ${c.n} &middot; ${playing(c)}`;
+
+/* ---------- Spreads ---------- */
+const box9 = (() => { const rows=['Above','Centre','Below'], rd=['what is on your mind','the situation itself','what lies beneath, within your control'], cols=['Past','Present','Future'];
+  const out=[]; for(let r=0;r<3;r++) for(let c=0;c<3;c++) out.push({n: r===1&&c===1 ? 'The Heart' : `${cols[c]} · ${rows[r]}`, d: r===1&&c===1 ? 'The core of the matter; read every other card around it' : `${cols[c].toLowerCase()} — ${rd[r]}`, x:c*1.12, y:r*1.08}); return out; })();
+const SPREADS = {
+ single:{name:'Single Card', t:'Single Card', pos:[{n:'The Card', d:'The answer, or the theme of the day', x:0, y:0}]},
+ line3:{name:'Three-Card Line', t:'Three-Card Line', pos:[
+   {n:'Subject', d:'What the question is about', x:0, y:0},
+   {n:'Development', d:'How it is unfolding; read it as a bridge between the two', x:1.15, y:0},
+   {n:'Outcome', d:'Where it is heading', x:2.3, y:0}]},
+ line5:{name:'Five-Card Line', t:'Five-Card Line', pos:[
+   {n:'Past', d:'What led here', x:0, y:0},
+   {n:'Recent', d:'What has just happened', x:1.15, y:0},
+   {n:'The Heart', d:'The core of the matter', x:2.3, y:0},
+   {n:'Near Future', d:'What comes next', x:3.45, y:0},
+   {n:'Outcome', d:'How it resolves', x:4.6, y:0}]},
+ box9:{name:'Nine-Card Box', t:'Nine-Card Box', pos:box9},
+ gt:{name:'Grand Tableau', t:'Grand Tableau', pos:DECK.map((c,i)=>({n:`House of the ${c.name}`, d:`House ${i+1}: ${c.keys.split(', ').slice(0,3).join(', ')}`, x:(i%9)*1.08, y:Math.floor(i/9)*1.06}))},
+ custom:{name:'Free Draw', t:'Free Draw', custom:true}
+};
+
+/* ---------- State & elements ---------- */
+const state = { spread:'line3', customN:5, order:[], reversed:IDS.map(()=>false), drawn:[], revealed:new Set(), busy:false };
+function shuffled(arr){ const a = arr.slice(); for(let i=a.length-1;i>0;i--){ const j=rand(i+1); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+const $ = id => document.getElementById(id);
+const stage = $('stage'), spreadsEl = $('spreads'), tilesEl = $('tiles'), statusEl = $('status');
+const shuffleBtn = $('shuffleBtn'), randomBtn = $('randomBtn'), revealBtn = $('revealBtn');
+const customWrap = $('customWrap'), customOut = $('customOut'), minusBtn = $('minusBtn'), plusBtn = $('plusBtn');
+
+const els = DECK.map(c => {
+  const el = document.createElement('div');
+  el.className = 'card'; el.dataset.id = c.id;
+  el.innerHTML = `<div class="card-inner"><div class="face back"><svg viewBox="0 0 100 145" preserveAspectRatio="none" aria-hidden="true"><use href="#cardback"/></svg></div><div class="face front">${frontHTML(c)}</div></div>`;
+  return el;
+});
+const deckLabel = document.createElement('div');
+deckLabel.className = 'deck-label';
+stage.appendChild(deckLabel);
+els.forEach(el => stage.appendChild(el));
+
+/* ---------- Geometry ---------- */
+let G = null;
+function positionsFor(key, width){
+  const s = SPREADS[key];
+  if(!s.custom) return s.pos;
+  const N = state.customN, cols = Math.min(N, width < 600 ? 4 : 6);
+  return Array.from({length:N}, (_, i) => ({ n:'Card ' + (i+1), d: i===0 ? 'Read in order, each card shading the next' : 'Drawn ' + ordinal(i+1), x:(i%cols)*1.15, y:Math.floor(i/cols)*1.08 }));
+}
+const positions = () => positionsFor(state.spread, stage.clientWidth);
+function ordinal(n){ const s=['th','st','nd','rd'], v=n%100; return n+(s[(v-20)%10]||s[v]||s[0]); }
+function bbox(pos){
+  let minX=Infinity, maxX=-Infinity, minY=Infinity, maxY=-Infinity;
+  pos.forEach(p => { const cx=p.x+.5, cy=(p.y+.5)*R; minX=Math.min(minX,cx-.5); maxX=Math.max(maxX,cx+.5); minY=Math.min(minY,cy-R/2); maxY=Math.max(maxY,cy+R/2); });
+  return {minX, minY, bw:maxX-minX, bh:maxY-minY};
+}
+function computeGeometry(){
+  const W = stage.clientWidth || 800;
+  const pos = positions(), b = bbox(pos);
+  const padX = W < 560 ? 12 : 28, padTop = 30;
+  const availH = Math.max(280, Math.min(window.innerHeight * 0.66, 660));
+  const cw = Math.min(150, (W - padX*2) / b.bw, availH / b.bh);
+  const ch = cw * R;
+  const ox = (W - b.bw*cw)/2 - b.minX*cw, oy = padTop - b.minY*cw;
+  const slots = pos.map(p => ({cx: ox + (p.x+.5)*cw, cy: oy + (p.y+.5)*R*cw, rot:0}));
+  const spreadBottom = padTop + b.bh*cw;
+  const fwT = W < 560 ? 46 : W < 1000 ? 60 : 70;
+  const fs = fwT / cw, fw = fwT, fh = fwT * R;
+  const rows = W < 560 ? 2 : 1, perRow = Math.ceil(TOTAL / rows);
+  const span = W - fw - 36, maxA = 18 * Math.PI / 180;
+  const Rr = (span/2) / Math.sin(maxA), drop = Rr * (1 - Math.cos(maxA)), rowGap = fh * 0.62;
+  const labelY = spreadBottom + 26, fanTop = labelY + 34;
+  const fan = [];
+  for(let k=0;k<TOTAL;k++){
+    const r = Math.floor(k/perRow), j = k%perRow, n = Math.min(perRow, TOTAL - r*perRow);
+    const t = n > 1 ? j/(n-1)*2 - 1 : 0, a = t*maxA;
+    fan.push({cx: W/2 + Rr*Math.sin(a), cy: fanTop + r*rowGap + fh/2 + Rr*(1-Math.cos(a)), rot: a*180/Math.PI});
+  }
+  const fanH = (rows-1)*rowGap + fh + drop;
+  G = {W, cw, ch, slots, fan, fs, fw, fh, H: Math.ceil(fanTop + fanH + 28), labelY, deck:{cx: W/2, cy: fanTop + fanH/2}, pos};
+}
+function setT(el, cx, cy, rot, scale){ el.style.transform = `translate(${f(cx - G.cw/2)}px, ${f(cy - G.ch/2)}px) rotate(${f(rot)}deg) translateY(var(--lift, 0px)) scale(${f(scale)})`; }
+function place(id){
+  const el = els[id], di = state.drawn.indexOf(id);
+  if(di >= 0 && G.slots[di]){
+    const s = G.slots[di];
+    setT(el, s.cx, s.cy, 0, 1);
+    el.style.zIndex = 300 + di;
+    el.classList.remove('in-fan'); el.classList.add('drawn');
+    el.tabIndex = 0; el.setAttribute('role','button');
+    el.setAttribute('aria-label', `Position ${di+1}, ${G.pos[di].n}: ` + (state.revealed.has(id) ? DECK[id].name : 'face down, press to turn over'));
+  } else {
+    const k = state.order.indexOf(id), p = G.fan[k];
+    setT(el, p.cx, p.cy, p.rot, G.fs);
+    el.style.zIndex = 10 + k;
+    el.classList.add('in-fan'); el.classList.remove('drawn');
+    el.tabIndex = -1; el.removeAttribute('role'); el.removeAttribute('aria-label');
+  }
+}
+const placeAll = () => IDS.forEach(place);
+function renderSlots(){
+  stage.querySelectorAll('.slot').forEach(s => s.remove());
+  G.slots.forEach((s, i) => {
+    const d = document.createElement('div');
+    d.className = 'slot';
+    d.innerHTML = `<span class="slot-num">${i+1}</span>${G.cw >= 70 ? `<span class="slot-name">${G.pos[i].n}</span>` : ''}`;
+    d.style.transform = `translate(${f(s.cx - G.cw/2)}px, ${f(s.cy - G.ch/2)}px)`;
+    stage.insertBefore(d, deckLabel);
+  });
+}
+function relayout(doPlace = true){
+  computeGeometry();
+  stage.style.setProperty('--cw', G.cw + 'px');
+  stage.style.height = G.H + 'px';
+  deckLabel.style.top = G.labelY + 'px';
+  renderSlots(); updateDeckLabel();
+  if(doPlace && !state.busy) placeAll();
+}
+const updateDeckLabel = () => { deckLabel.textContent = `The deck · ${TOTAL - state.drawn.length} of ${TOTAL}`; };
+
+/* ---------- Spread tiles ---------- */
+function miniDiagram(key){
+  const pos = positionsFor(key, 900), b = bbox(pos);
+  const s = Math.min(58/b.bw, 38/b.bh), ox = (62 - b.bw*s)/2 - b.minX*s, oy = (40 - b.bh*s)/2 - b.minY*s;
+  const w = f(s*.84), h = f(s*R*.84);
+  return `<svg viewBox="0 0 62 40" aria-hidden="true">${pos.map(p => { const cx = ox + (p.x+.5)*s, cy = oy + (p.y+.5)*R*s;
+    return `<rect x="${f(cx-w/2)}" y="${f(cy-h/2)}" width="${w}" height="${h}" rx=".8"/>`; }).join('')}</svg>`;
+}
+function buildTiles(){
+  tilesEl.innerHTML = Object.entries(SPREADS).map(([k, s]) => `<label class="tile" title="${s.name}">
+    <input type="radio" name="spread" id="sp-${k}" value="${k}"${k===state.spread?' checked':''}>
+    <span class="tcount">${s.custom ? state.customN : s.pos.length}</span>
+    <span class="tdiag" data-key="${k}">${miniDiagram(k)}</span><span class="tname">${s.t}</span></label>`).join('');
+}
+function refreshCustomTile(){
+  const d = tilesEl.querySelector('.tdiag[data-key="custom"]');
+  if(d){ d.innerHTML = miniDiagram('custom'); d.parentElement.querySelector('.tcount').textContent = state.customN; }
+}
+
+/* ---------- UI ---------- */
+function updateUI(){
+  const N = G.pos.length, drawn = state.drawn.length;
+  const turned = state.drawn.filter(id => state.revealed.has(id)).length;
+  shuffleBtn.disabled = state.busy;
+  randomBtn.disabled = state.busy || drawn >= N;
+  revealBtn.disabled = state.busy || turned === drawn || drawn === 0;
+  spreadsEl.disabled = state.busy;
+  minusBtn.disabled = state.busy || state.customN <= 1;
+  plusBtn.disabled = state.busy || state.customN >= 12;
+  stage.classList.toggle('full', drawn >= N);
+  stage.classList.toggle('busy', state.busy);
+  updateDeckLabel();
+  let msg;
+  if(state.busy) msg = 'Shuffling the deck…';
+  else if(drawn === 0) msg = N === TOTAL ? 'The Grand Tableau uses the whole deck. Draw at random to lay all <b>36</b> out.' : `Pull <b>${N}</b> card${N>1?'s':''} from the fanned deck, or draw at random.`;
+  else if(drawn < N) msg = `<b>${N-drawn}</b> more to pull.`;
+  else if(turned < drawn) msg = 'Turn each card over to read it.';
+  else msg = 'The reading is laid out. Shuffle &amp; Spread to begin again.';
+  statusEl.innerHTML = msg;
+}
+function renderReading(){
+  const s = SPREADS[state.spread];
+  $('readingTitle').textContent = s.custom ? `Free Draw of ${state.customN}` : s.name;
+  const turned = state.drawn.filter(id => state.revealed.has(id)).length;
+  $('readingMeta').textContent = `${turned} of ${G.pos.length} revealed`;
+  $('ledger').innerHTML = G.pos.map((p, i) => {
+    const id = state.drawn[i];
+    let inner;
+    if(id === undefined) inner = `<div class="waiting">Awaiting a card</div>`;
+    else if(!state.revealed.has(id)) inner = `<div class="waiting">Face down</div><button class="linkish" type="button" data-turn="${id}">Turn it over</button>`;
+    else { const c = DECK[id], t = TONE[c.tone];
+      inner = `<div class="card-line"><span class="card-title">${c.n}. ${c.name}</span><span class="pill ${t[0]}">${t[1]}</span></div>
+        <div class="card-meta">${playing(c)}</div>
+        <div class="card-keys">${dot(c.keys)}</div>
+        <div class="card-look"><b>As a person</b> ${c.person}</div>
+        <div class="card-look"><b>Look for</b> ${c.look}</div>
+        <button class="linkish" type="button" data-open="${id}">View card</button>`; }
+    return `<li class="entry"><span class="entry-num">${i+1}</span><div class="entry-body"><span class="pos-name">${p.n}</span><span class="pos-desc">${p.d}</span>${inner}</div></li>`;
+  }).join('');
+}
+
+/* ---------- Actions ---------- */
+function pull(id){
+  if(state.drawn.length >= G.pos.length || state.drawn.includes(id)) return;
+  state.drawn.push(id); els[id].style.transitionDelay = '0ms';
+  place(id); renderReading(); updateUI();
+}
+function reveal(id){
+  if(state.revealed.has(id)) return;
+  state.revealed.add(id); els[id].classList.add('revealed');
+  place(id); renderReading(); updateUI();
+}
+async function drawRandom(){
+  if(state.busy) return;
+  state.busy = true; updateUI();
+  const gap = G.pos.length > 12 ? 90 : 260;
+  while(state.drawn.length < G.pos.length){
+    const pool = state.order.filter(id => !state.drawn.includes(id));
+    pull(pool[rand(pool.length)]);
+    await sleep(gap);
+  }
+  state.busy = false; updateUI();
+}
+async function revealAll(){
+  if(state.busy) return;
+  state.busy = true; updateUI();
+  const gap = G.pos.length > 12 ? 70 : 240;
+  for(const id of state.drawn.slice()) if(!state.revealed.has(id)){ reveal(id); await sleep(gap); }
+  state.busy = false; updateUI();
+}
+const stackPos = k => ({cx: G.deck.cx + jitter(1.2), cy: G.deck.cy - k*0.18 + jitter(0.6)});
+function riffleMerge(cur, half){
+  const A = cur.slice(0, half), B = cur.slice(half), out = [];
+  while(A.length || B.length){ const from = !A.length ? B : !B.length ? A : (rand(2) ? A : B); let n = 1 + rand(3); while(n-- && from.length) out.push(from.shift()); }
+  return out;
+}
+async function shuffleAndSpread(initial = false){
+  if(state.busy) return;
+  state.busy = true; updateUI();
+  if(!initial){
+    if(state.revealed.size){ state.revealed.forEach(id => els[id].classList.remove('revealed')); state.revealed.clear(); await sleep(500); }
+    state.drawn = []; renderReading(); updateUI();
+    state.order.forEach((id, k) => { const el = els[id], p = stackPos(k);
+      el.style.transitionDelay = (k*6*M) + 'ms'; el.style.zIndex = 10 + k; el.classList.remove('in-fan','drawn');
+      setT(el, p.cx, p.cy, jitter(2), G.fs); });
+    await sleep(650 + TOTAL*6);
+  }
+  const finalOrder = shuffled(IDS);
+  let cur = state.order.slice();
+  for(let pass = 0; pass < 3; pass++){
+    const half = Math.floor(TOTAL/2) + rand(5) - 2;
+    cur.forEach((id, k) => { const el = els[id], left = k < half, kk = left ? k : k - half;
+      el.style.transitionDelay = '0ms';
+      setT(el, G.deck.cx + (left ? -1 : 1) * G.fw * 0.8, G.deck.cy - kk*0.25, left ? -8 : 8, G.fs); });
+    await sleep(380);
+    const next = pass === 2 ? finalOrder : riffleMerge(cur, half);
+    next.forEach((id, k) => { const el = els[id], p = stackPos(k);
+      el.style.transitionDelay = (k*8*M) + 'ms'; el.style.zIndex = 10 + k;
+      setT(el, p.cx, p.cy, jitter(1.5), G.fs); });
+    cur = next;
+    await sleep(420 + TOTAL*8);
+  }
+  state.order = finalOrder;
+  state.order.forEach((id, k) => { els[id].style.transitionDelay = (k*14*M) + 'ms'; place(id); });
+  await sleep(700 + TOTAL*14);
+  els.forEach(el => el.style.transitionDelay = '0ms');
+  state.busy = false; renderReading(); updateUI();
+}
+function onSpreadChange(){
+  customWrap.hidden = state.spread !== 'custom';
+  state.revealed.forEach(id => els[id].classList.remove('revealed'));
+  state.revealed.clear(); state.drawn = [];
+  relayout(); renderReading(); updateUI();
+}
+function setCustom(v){
+  v = Math.max(1, Math.min(12, v));
+  if(v === state.customN) return;
+  state.customN = v; customOut.textContent = v;
+  refreshCustomTile(); onSpreadChange();
+}
+
+/* ---------- Modal ---------- */
+const modal = $('modal');
+let lastFocus = null;
+function openModal(id){
+  const c = DECK[id], i = state.drawn.indexOf(id), t = TONE[c.tone];
+  $('mPos').textContent = i >= 0 ? `Position ${i+1} · ${G.pos[i].n}` : '';
+  $('mName').textContent = `${c.n}. ${c.name}`;
+  $('mMeta').innerHTML = `${playing(c)} &middot; <span class="pill ${t[0]}">${t[1]}</span>`;
+  $('mLook').innerHTML = `<b>Look for</b> ${c.look}`;
+  $('mKeys').textContent = dot(c.keys); $('mPerson').textContent = dot(c.person);
+  const w = window.innerWidth < 640 ? 190 : 250;
+  $('mArt').innerHTML = `<div class="card" style="--cw:${w}px"><div class="face front">${frontHTML(c)}</div></div>`;
+  lastFocus = document.activeElement; modal.hidden = false; $('modalClose').focus();
+}
+function closeModal(){ modal.hidden = true; if(lastFocus && lastFocus.focus) lastFocus.focus(); }
+$('modalClose').addEventListener('click', closeModal);
+modal.addEventListener('click', e => { if(e.target === modal) closeModal(); });
+document.addEventListener('keydown', e => { if(e.key === 'Escape' && !modal.hidden) closeModal(); });
+
+/* ---------- Events ---------- */
+buildTiles();
+tilesEl.addEventListener('change', e => { if(e.target.name === 'spread' && !state.busy){ state.spread = e.target.value; onSpreadChange(); } });
+minusBtn.addEventListener('click', () => setCustom(state.customN - 1));
+plusBtn.addEventListener('click', () => setCustom(state.customN + 1));
+shuffleBtn.addEventListener('click', () => shuffleAndSpread());
+randomBtn.addEventListener('click', drawRandom);
+revealBtn.addEventListener('click', revealAll);
+function activateCard(el){
+  const id = +el.dataset.id;
+  if(el.classList.contains('drawn')){ if(!state.busy) state.revealed.has(id) ? openModal(id) : reveal(id); }
+  else if(el.classList.contains('in-fan') && !state.busy) pull(id);
+}
+stage.addEventListener('click', e => { const el = e.target.closest('.card'); if(el) activateCard(el); });
+stage.addEventListener('keydown', e => { const el = e.target.closest('.card'); if(el && (e.key === 'Enter' || e.key === ' ')){ e.preventDefault(); activateCard(el); } });
+$('ledger').addEventListener('click', e => {
+  const t = e.target.closest('[data-turn]'), o = e.target.closest('[data-open]');
+  if(t && !state.busy) reveal(+t.dataset.turn);
+  if(o) openModal(+o.dataset.open);
+});
+let rz;
+window.addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => relayout(), 120); });
+
+/* ---------- First deal ---------- */
+state.order = shuffled(IDS);
+relayout(false);
+stage.classList.add('instant');
+state.order.forEach((id, k) => { const p = stackPos(k); els[id].style.zIndex = 10 + k; setT(els[id], p.cx, p.cy, 0, G.fs); });
+void stage.offsetHeight;
+stage.classList.remove('instant');
+renderReading(); updateUI();
+setTimeout(() => shuffleAndSpread(true), 300);
+})();
+</script>
+
+</body></html>

@@ -1,0 +1,1190 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<meta charset="utf-8">
+<title>Arcana Table</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=IM+Fell+English:ital@0;1&family=IM+Fell+English+SC&display=swap">
+<style>
+/* Layout: one velvet card table. Masthead, a compact spread console, the table (spread above, fanned deck below), then the reading ledger. */
+:root{
+  color-scheme: dark;
+  --velvet:#150b11; --velvet-2:#2b1320; --velvet-3:#3a1a2a;
+  --gold:#c9a557; --gold-dim:#86693a; --bone:#e7d9b9; --muted:#a9977b;
+  --parch:#eadbb8; --parch-hi:#f4ead0; --parch-edge:#cdb68a;
+  --ink:#2d1f15; --oxblood:#7d2a22; --woad:#34506a; --ochre:#8a6418; --gilt:#c08f2e;
+  --sage:#5d6b47; --skin:#ecd3ab; --stone:#9b9383;
+  --back:#1d2547; --back-2:#0d1229;
+  --shadow:rgba(0,0,0,.55);
+  --f-display:"IM Fell English","Iowan Old Style",Georgia,serif;
+  --f-sc:"IM Fell English SC","IM Fell English",Georgia,serif;
+  --f-body:"Cormorant Garamond","Iowan Old Style",Georgia,serif;
+  --f-glyph:"Apple Symbols","Segoe UI Symbol","Noto Sans Symbols 2","Noto Sans Symbols","DejaVu Sans",serif;
+  --dur:.65s;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{background:var(--velvet)}
+body{
+  color:var(--bone); font-family:var(--f-body); font-size:18px; line-height:1.5;
+  background:radial-gradient(ellipse 80% 50% at 50% 0%, var(--velvet-3) 0%, transparent 70%), var(--velvet);
+  min-height:100%;
+}
+.wrap{max-width:1180px;margin:0 auto;padding-block:26px 64px;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));
+  padding-right:max(16px, env(safe-area-inset-right, 0px));
+  display:flex;flex-direction:column;gap:18px}
+
+.home{align-self:flex-start;font-family:var(--f-sc);letter-spacing:.12em;font-size:.8rem;color:var(--gold-dim);text-decoration:none}
+.home:hover{color:var(--gold)}
+/* Masthead */
+.masthead{text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px}
+.eyebrow{font-family:var(--f-sc);letter-spacing:.16em;font-size:.82rem;color:var(--gold);margin:0}
+.masthead h1{font-family:var(--f-display);font-weight:400;font-size:clamp(2.6rem,7vw,4.4rem);line-height:1;margin:0;color:var(--bone);letter-spacing:.01em;text-wrap:balance}
+.masthead h1 i{color:var(--gold)}
+.rule{display:flex;align-items:center;gap:12px;color:var(--gold-dim);width:min(360px,80%)}
+.rule::before,.rule::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--gold-dim),transparent)}
+.rule svg{width:18px;height:18px;flex:none}
+.lede{margin:0;color:var(--muted);font-style:italic;max-width:56ch;text-wrap:balance}
+
+/* Spread console */
+.console{display:flex;flex-direction:column;align-items:center;gap:10px;border-top:1px solid rgba(201,165,87,.25);border-bottom:1px solid rgba(201,165,87,.25);padding-block:10px}
+fieldset{border:0;margin:0;padding:0;min-width:0}
+.tiles{display:flex;gap:2px;overflow-x:auto;max-width:100%;justify-content:safe center;scrollbar-width:thin;scrollbar-color:var(--gold-dim) transparent;padding:2px}
+.tile{position:relative;flex:none;width:90px;display:flex;flex-direction:column;align-items:center;gap:5px;padding:8px 4px 7px;border-radius:4px;border:1px solid transparent;cursor:pointer;color:var(--muted);transition:color .2s,background .2s,border-color .2s;user-select:none}
+.tile input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.tile svg{width:62px;height:40px;display:block;overflow:visible}
+.tile svg rect{fill:transparent;stroke:var(--gold-dim);stroke-width:1;transition:fill .2s,stroke .2s}
+.tname{font-family:var(--f-sc);font-size:.74rem;letter-spacing:.05em;line-height:1.12;text-align:center;text-wrap:balance}
+.tcount{position:absolute;top:3px;right:6px;font-family:var(--f-display);font-size:.72rem;color:var(--gold-dim);font-variant-numeric:tabular-nums}
+.tile:hover{color:var(--bone)}
+.tile:hover svg rect{stroke:var(--gold)}
+.tile:has(input:checked){color:var(--gold);border-color:rgba(201,165,87,.6);background:rgba(201,165,87,.08)}
+.tile:has(input:checked) svg rect{fill:rgba(201,165,87,.28);stroke:var(--gold)}
+.tile:has(input:checked) .tcount{color:var(--gold)}
+.tile:has(input:focus-visible){outline:2px solid var(--bone);outline-offset:1px}
+fieldset:disabled .tile{opacity:.5;cursor:default}
+
+.bar{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;justify-content:center}
+.stepper{display:inline-flex;align-items:center;gap:2px;border:1px solid var(--gold-dim);border-radius:999px;padding:2px 4px;color:var(--muted);font-size:.95rem}
+.stepper button{width:26px;height:26px;border-radius:50%;border:0;background:transparent;color:var(--gold);font:inherit;font-size:1.2rem;line-height:1;cursor:pointer}
+.stepper button:hover:not(:disabled){background:rgba(201,165,87,.15)}
+.stepper button:disabled{opacity:.35;cursor:default}
+.stepper output{min-width:1.6em;text-align:center;font-family:var(--f-display);color:var(--bone);font-variant-numeric:tabular-nums}
+.stepper span{padding-right:8px}
+.toggle{display:inline-flex;align-items:center;gap:8px;cursor:pointer;color:var(--muted);font-size:.98rem}
+.toggle input{accent-color:var(--gold);width:16px;height:16px}
+.note{font-size:.88rem;font-style:italic;color:var(--gold-dim)}
+.actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.btn{font-family:var(--f-sc);letter-spacing:.1em;font-size:.98rem;padding:9px 18px;border-radius:3px;border:1px solid var(--gold);background:transparent;color:var(--gold);cursor:pointer;transition:background .2s,color .2s,opacity .2s}
+.btn:hover:not(:disabled){background:rgba(201,165,87,.12)}
+.btn.primary{background:var(--gold);color:var(--velvet)}
+.btn.primary:hover:not(:disabled){background:var(--bone);border-color:var(--bone)}
+.btn:disabled{opacity:.38;cursor:default}
+.btn:focus-visible,.stepper button:focus-visible{outline:2px solid var(--bone);outline-offset:2px}
+.status{text-align:center;margin:0;font-style:italic;color:var(--bone);min-height:1.5em}
+.status b{font-style:normal;font-family:var(--f-display);font-weight:400;color:var(--gold)}
+
+/* Table */
+.table{position:relative;border:1px solid var(--gold-dim);border-radius:6px;padding:6px;
+  background:radial-gradient(ellipse 70% 60% at 50% 40%, var(--velvet-3) 0%, var(--velvet-2) 45%, var(--velvet) 100%);
+  box-shadow:inset 0 0 80px rgba(0,0,0,.6), 0 20px 50px rgba(0,0,0,.4)}
+.table::before{content:"";position:absolute;inset:5px;border:1px solid rgba(201,165,87,.22);border-radius:3px;pointer-events:none}
+.stage{position:relative;width:100%;overflow:hidden;transition:height .5s ease}
+.deck-label{position:absolute;left:0;right:0;text-align:center;font-family:var(--f-sc);letter-spacing:.18em;font-size:.78rem;color:var(--gold-dim);pointer-events:none;display:flex;align-items:center;gap:12px;padding:0 24px}
+.deck-label::before,.deck-label::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(201,165,87,.35),transparent)}
+
+.slot{position:absolute;left:0;top:0;width:var(--cw);height:calc(var(--cw)*1.7);border:1px dashed rgba(201,165,87,.45);border-radius:calc(var(--cw)*.07);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:calc(var(--cw)*.12);gap:4px;color:var(--gold-dim);text-align:center;z-index:1;pointer-events:none;transition:transform .5s ease}
+.slot-num{font-family:var(--f-display);font-size:calc(var(--cw)*.22);line-height:1;color:var(--gold)}
+.slot-name{font-family:var(--f-sc);font-size:max(9px,calc(var(--cw)*.105));letter-spacing:.06em;line-height:1.1;padding:0 6%}
+.slot.rot .slot-name{display:none}
+
+/* Cards */
+.card{position:absolute;left:0;top:0;width:var(--cw);height:calc(var(--cw)*1.7);font-size:calc(var(--cw)*.1);
+  transform-origin:50% 50%;perspective:900px;transition:transform var(--dur) cubic-bezier(.3,.7,.2,1);-webkit-tap-highlight-color:transparent}
+.stage.instant .card{transition:none!important}
+.card-inner{position:absolute;inset:0;transform-style:preserve-3d;transition:transform calc(var(--dur)*1.15) cubic-bezier(.4,.1,.2,1)}
+.card.revealed .card-inner{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:calc(var(--cw)*.07);overflow:hidden;box-shadow:0 0 0 1px rgba(0,0,0,.45),0 .3em .9em var(--shadow)}
+.back{background:radial-gradient(ellipse at 50% 50%, var(--back) 0%, var(--back-2) 85%);color:var(--gold)}
+.back svg{display:block;width:100%;height:100%}
+.front{transform:rotateY(180deg)}
+.card.in-fan{cursor:pointer}
+.stage:not(.full):not(.busy) .card.in-fan:hover{--lift:-16px}
+.stage.full .card.in-fan, .stage.busy .card.in-fan{cursor:default}
+.stage.full .card.in-fan .back{filter:brightness(.55) saturate(.8)}
+.card.drawn{cursor:pointer}
+.card:focus-visible{outline:none}
+.card:focus-visible .face{box-shadow:0 0 0 2px var(--bone),0 .3em .9em var(--shadow)}
+
+.front{background:radial-gradient(ellipse at 50% 42%, var(--parch-hi) 0%, var(--parch) 55%, var(--parch-edge) 100%);color:var(--ink);padding:.4em;display:flex}
+.frame{flex:1;min-height:0;border:.26em double var(--ink);border-radius:.25em;display:flex;flex-direction:column;align-items:center;padding:.22em .15em .22em}
+.numeral{font-family:var(--f-display);font-size:1.15em;line-height:1;letter-spacing:.06em}
+.numeral.word{font-family:var(--f-sc);font-size:.9em;letter-spacing:.12em}
+.art{flex:1;min-height:0;width:100%;display:flex;align-items:center;justify-content:center;padding:.12em 0}
+.art svg{width:100%;height:100%;display:block}
+.cname{font-family:var(--f-sc);font-size:.95em;line-height:1.05;text-align:center;border-top:.06em solid var(--ink);padding-top:.25em;width:100%;text-wrap:balance}
+
+/* Reading ledger */
+.reading{display:flex;flex-direction:column;gap:14px}
+.reading-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px;border-bottom:1px solid var(--gold-dim);padding-bottom:8px}
+.reading h2{font-family:var(--f-display);font-weight:400;font-size:1.9rem;margin:0;color:var(--bone)}
+.reading-meta{font-family:var(--f-sc);letter-spacing:.12em;font-size:.82rem;color:var(--gold);font-variant-numeric:tabular-nums}
+.ledger{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px 28px}
+.entry{display:grid;grid-template-columns:2.2em 1fr;gap:4px 12px;padding:12px 0;border-bottom:1px solid rgba(201,165,87,.18);min-width:0}
+.entry-num{font-family:var(--f-display);font-size:1.7rem;line-height:1;color:var(--gold);text-align:center}
+.entry-body{min-width:0;display:flex;flex-direction:column;gap:3px}
+.pos-name{font-family:var(--f-sc);letter-spacing:.08em;font-size:.95rem;color:var(--gold)}
+.pos-desc{font-size:.95rem;color:var(--muted);font-style:italic}
+.card-line{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px;margin-top:4px}
+.card-title{font-family:var(--f-display);font-size:1.3rem;color:var(--bone);line-height:1.15}
+.pill{font-family:var(--f-sc);letter-spacing:.1em;font-size:.72rem;padding:1px 9px 2px;border-radius:999px;border:1px solid var(--gold-dim);color:var(--gold)}
+.pill.rev{border-color:#b0574a;color:#e09a8c}
+.card-meta{font-size:.9rem;color:var(--muted)}
+.card-keys{font-size:1.05rem;color:var(--bone);line-height:1.45}
+.card-look{font-size:.92rem;color:var(--muted);font-style:italic}
+.card-look b{font-style:normal;font-family:var(--f-sc);font-weight:400;letter-spacing:.08em;color:var(--gold-dim);font-size:.82rem}
+.waiting{font-size:.95rem;color:var(--gold-dim);margin-top:4px}
+.linkish{background:none;border:0;padding:0;color:var(--gold);font:inherit;font-size:.92rem;text-decoration:underline;text-underline-offset:3px;cursor:pointer;align-self:flex-start;margin-top:2px}
+.linkish:focus-visible{outline:2px solid var(--bone);outline-offset:2px}
+footer{text-align:center;color:var(--gold-dim);font-size:.9rem;font-style:italic}
+
+/* Modal */
+.modal{position:fixed;inset:0;z-index:1000;background:rgba(8,4,7,.84);display:flex;align-items:center;justify-content:center;
+  padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));overflow-y:auto}
+.modal-card{position:relative;background:var(--velvet-2);border:1px solid var(--gold-dim);border-radius:6px;max-width:800px;width:100%;padding:28px;display:flex;flex-wrap:wrap;gap:28px;align-items:center;justify-content:center;box-shadow:0 30px 80px rgba(0,0,0,.6);margin:auto}
+.modal-art{flex:none;width:230px;height:391px;position:relative}
+.modal-art .card{position:relative;transition:none}
+.modal-art .front{transform:none}
+.modal-art .card.rev{transform:rotate(180deg)}
+.modal-text{flex:1 1 280px;min-width:0;display:flex;flex-direction:column;gap:8px}
+.modal-text h3{font-family:var(--f-display);font-weight:400;font-size:2rem;margin:0;line-height:1.1;color:var(--bone)}
+.meanings{display:grid;gap:10px;margin-top:6px}
+.meaning{padding:10px 14px;border:1px solid rgba(201,165,87,.2);border-radius:4px;opacity:.62}
+.meaning.active{opacity:1;border-color:var(--gold);background:rgba(201,165,87,.07)}
+.meaning h4{margin:0 0 2px;font-family:var(--f-sc);letter-spacing:.12em;font-weight:400;font-size:.82rem;color:var(--gold)}
+.meaning p{margin:0}
+.modal-close{position:absolute;top:8px;right:10px;background:none;border:0;color:var(--gold);font-size:1.9rem;line-height:1;cursor:pointer;padding:4px 10px;font-family:var(--f-display)}
+.modal-close:focus-visible{outline:2px solid var(--bone)}
+
+@media (max-width:640px){
+  body{font-size:17px}
+  .btn{padding:8px 13px;font-size:.9rem}
+  .tiles{justify-content:flex-start}
+  .tile{width:80px}
+  .modal-card{padding:22px 18px}
+  .modal-art{width:180px;height:306px}
+}
+@media (prefers-reduced-motion: reduce){ .stage{transition:none} }
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="s-wands" viewBox="0 0 24 40">
+      <rect x="10.4" y="2" width="3.2" height="36" rx="1.6" fill="currentColor"/>
+      <path d="M13.6 11c4-1 6-3.5 6.6-7-3.8.6-6 3-6.6 7z" fill="var(--sage)"/>
+      <path d="M10.4 20c-4-1-6-3.5-6.6-7 3.8.6 6 3 6.6 7z" fill="var(--sage)"/>
+      <path d="M13.6 29c4-1 6-3.5 6.6-7-3.8.6-6 3-6.6 7z" fill="var(--sage)"/>
+    </symbol>
+    <symbol id="s-cups" viewBox="0 0 24 40">
+      <path d="M3 5h18c0 9-3.6 14.5-9 15.6C6.6 19.5 3 14 3 5z" fill="currentColor"/>
+      <path d="M5.5 8h13" stroke="#f4ead0" stroke-opacity=".55" stroke-width="1"/>
+      <rect x="10.8" y="20" width="2.4" height="10" fill="currentColor"/>
+      <circle cx="12" cy="25" r="2" fill="currentColor"/>
+      <path d="M5 36c1-3.6 4-5.6 7-5.6s6 2 7 5.6z" fill="currentColor"/>
+    </symbol>
+    <symbol id="s-swords" viewBox="0 0 24 40">
+      <path d="M12 1.5l2.3 5v20.5h-4.6V6.5z" fill="#d9d4c6"/>
+      <rect x="4" y="27" width="16" height="2.6" rx="1.3" fill="currentColor"/>
+      <rect x="10.7" y="29.6" width="2.6" height="6.4" fill="currentColor"/>
+      <circle cx="12" cy="37.6" r="2" fill="currentColor"/>
+    </symbol>
+    <symbol id="s-pentacles" viewBox="0 0 24 40">
+      <circle cx="12" cy="20" r="10.4" fill="#d9aa45" stroke="currentColor" stroke-width="1.5"/>
+      <polygon points="12,11.6 16.9,26.8 4,17.4 20,17.4 7.1,26.8" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="cardback" viewBox="0 0 100 170"></symbol>
+  </defs>
+</svg>
+
+<div class="wrap">
+  <a class="home" href="https://claude.ai/artifact/Po8kk9dCVPBqjpSk8Ucaxc" target="_blank" rel="noopener">&larr; The Reading Room</a>
+  <header class="masthead">
+    <p class="eyebrow">Seventy-eight cards &middot; Major &amp; Minor Arcana</p>
+    <h1>Arcana <i>Table</i></h1>
+    <div class="rule" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M10 1Q10 10 19 10Q10 10 10 19Q10 10 1 10Q10 10 10 1Z" fill="currentColor"/></svg></div>
+    <p class="lede">Choose a spread, shuffle the deck, and pull your cards from the fan. Each card falls upright or reversed as the deck is shuffled.</p>
+  </header>
+
+  <section class="console" aria-label="Reading options">
+    <fieldset id="spreads">
+      <legend class="eyebrow" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Choose a spread</legend>
+      <div class="tiles" id="tiles"></div>
+    </fieldset>
+    <div class="bar">
+      <div class="stepper" id="customWrap" hidden>
+        <button type="button" id="minusBtn" aria-label="Fewer cards">&minus;</button>
+        <output id="customOut" aria-live="polite">5</output>
+        <button type="button" id="plusBtn" aria-label="More cards">+</button>
+        <span>cards</span>
+      </div>
+      <label class="toggle"><input type="checkbox" id="allowRev" checked> Reversals</label>
+      <span class="note" id="revNote" hidden>applies at the next shuffle</span>
+      <div class="actions">
+        <button class="btn primary" id="shuffleBtn" type="button">Shuffle &amp; Spread</button>
+        <button class="btn" id="randomBtn" type="button">Draw at random</button>
+        <button class="btn" id="revealBtn" type="button">Reveal all</button>
+      </div>
+    </div>
+  </section>
+
+  <p class="status" id="status" aria-live="polite"></p>
+
+  <div class="table">
+    <div class="stage" id="stage"></div>
+  </div>
+
+  <section class="reading" aria-labelledby="readingTitle">
+    <div class="reading-head">
+      <h2 id="readingTitle">The Reading</h2>
+      <span class="reading-meta" id="readingMeta"></span>
+    </div>
+    <ol class="ledger" id="ledger"></ol>
+  </section>
+
+  <footer>Tap a turned card to see it up close, with both its upright and reversed meanings.</footer>
+</div>
+
+<div class="modal" id="modal" hidden role="dialog" aria-modal="true" aria-labelledby="mName">
+  <div class="modal-card">
+    <button class="modal-close" id="modalClose" type="button" aria-label="Close">&times;</button>
+    <div class="modal-art" id="mArt"></div>
+    <div class="modal-text">
+      <p class="eyebrow" id="mPos"></p>
+      <h3 id="mName"></h3>
+      <div class="card-meta" id="mMeta"></div>
+      <div class="card-look" id="mLook"></div>
+      <div class="meanings">
+        <div class="meaning" id="mUpBox"><h4>Upright</h4><p id="mUp"></p></div>
+        <div class="meaning" id="mRevBox"><h4>Reversed</h4><p id="mRev"></p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+const R = 1.7;
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const M = REDUCED ? 0.04 : 1;
+document.documentElement.style.setProperty('--dur', (0.65 * Math.max(M, 0.05)) + 's');
+const f = n => +(+n).toFixed(2);
+const sleep = ms => new Promise(r => setTimeout(r, ms * M));
+const rand = n => { const a = new Uint32Array(1); crypto.getRandomValues(a); return a[0] % n; };
+const jitter = s => (Math.random() * 2 - 1) * s;
+const dot = s => s.split(', ').join(' · ');
+
+/* ---------- Drawing kit (art box 100 × 130) ---------- */
+const INK='var(--ink)', OX='var(--oxblood)', WO='var(--woad)', OC='var(--ochre)', GI='var(--gilt)', SA='var(--sage)',
+      SK='var(--skin)', PH='var(--parch-hi)', PE='var(--parch-edge)', ST='var(--stone)';
+const P = (d, fill='none', x='') => `<path d="${d}" fill="${fill}" ${x}/>`;
+const C = (cx, cy, r, fill='none', x='') => `<circle cx="${f(cx)}" cy="${f(cy)}" r="${r}" fill="${fill}" ${x}/>`;
+const E = (cx, cy, rx, ry, fill='none', x='') => `<ellipse cx="${f(cx)}" cy="${f(cy)}" rx="${rx}" ry="${ry}" fill="${fill}" ${x}/>`;
+const L = (x1, y1, x2, y2, x='') => `<line x1="${f(x1)}" y1="${f(y1)}" x2="${f(x2)}" y2="${f(y2)}" ${x}/>`;
+const RC = (x, y, w, h, fill='none', e='') => `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${fill}" ${e}/>`;
+const T = (x, y, s, t, fill=INK) => `<text x="${x}" y="${y}" font-size="${s}" text-anchor="middle" dominant-baseline="central" fill="${fill}" stroke="none" style="font-family:var(--f-display)">${t}</text>`;
+const starPts = (cx, cy, Ro, ri, n, rot=-90) => { let s=''; for(let i=0;i<2*n;i++){ const a=(rot+i*180/n)*Math.PI/180, r=i%2?ri:Ro; s+=`${f(cx+r*Math.cos(a))},${f(cy+r*Math.sin(a))} `; } return s; };
+const STAR = (cx, cy, Ro, ri, n, fill, x='stroke-width=".5"') => `<polygon points="${starPts(cx,cy,Ro,ri,n)}" fill="${fill}" ${x}/>`;
+const rays = (cx, cy, r1, r2, n, x='', alt=false) => { let s=''; for(let i=0;i<n;i++){ const a=i*2*Math.PI/n, rr=alt&&i%2?r1+(r2-r1)*.55:r2; s+=L(cx+r1*Math.sin(a), cy-r1*Math.cos(a), cx+rr*Math.sin(a), cy-rr*Math.cos(a), x); } return s; };
+const head = (x, y, r=4.5) => C(x, y, r, SK);
+const U = (sym, x, y, w, h, color, e='') => `<use href="#s-${sym}" x="${f(x)}" y="${f(y)}" width="${w}" height="${h}" style="color:${color}" ${e}/>`;
+const lem = (cx, cy, w, x) => P(`M${cx} ${cy} C${f(cx-w*.3)} ${f(cy-w*.5)} ${cx-w} ${f(cy-w*.5)} ${cx-w} ${cy} C${cx-w} ${f(cy+w*.5)} ${f(cx-w*.3)} ${f(cy+w*.5)} ${cx} ${cy} C${f(cx+w*.3)} ${f(cy-w*.5)} ${cx+w} ${f(cy-w*.5)} ${cx+w} ${cy} C${cx+w} ${f(cy+w*.5)} ${f(cx+w*.3)} ${f(cy+w*.5)} ${cx} ${cy}Z`, 'none', x);
+const leaf = (x, y, rot, l=4, fill=SA) => `<ellipse cx="${f(x)}" cy="${f(y)}" rx="${l}" ry="${f(l*.42)}" transform="rotate(${f(rot)} ${f(x)} ${f(y)})" fill="${fill}" stroke-width=".5"/>`;
+const cloud = (x, y, fill=PH) => P(`M${x} ${y} c-3 0 -3 -4 0 -5 c0 -4 5 -6 8 -3 c2 -4 8 -4 10 0 c3 -1 6 1 5 4 c3 1 2 4 -1 4 z`, fill, 'stroke="var(--woad)" stroke-width=".7"');
+const waves = (y, x0=0, x1=100, c=WO) => { let d=`M${x0} ${y}`; for(let x=x0;x<x1;x+=6) d+=' q1.5 -2 3 0 t3 0'; return P(d,'none',`stroke="${c}" stroke-width=".8"`); };
+const drop = (x, y, fill=GI) => P(`M${x} ${y} q2.2 3.4 0 5.2 q-2.2 -1.8 0 -5.2z`, fill, 'stroke-width=".4"');
+function creature(t, x, y){
+  let s = cloud(x-11, y+7);
+  if(t==='angel') s += C(x,y,6,'none','stroke="var(--gilt)" stroke-width=".8"') + head(x,y,3.6);
+  if(t==='eagle') s += C(x,y,3.8,PE) + P(`M${x+3} ${y-1.4} l4.4 1.4 l-4.4 1.4z`, GI) + C(x+1,y-1,.6,INK,'stroke="none"');
+  if(t==='bull')  s += P(`M${x-4} ${y-2} q-4 -4 -1 -7 M${x+4} ${y-2} q4 -4 1 -7`,'none','stroke-width="1.2"') + C(x,y,4,OC);
+  if(t==='lion')  s += C(x,y,6,GI) + C(x,y,3.6,OC);
+  return s;
+}
+const pentagramDown = (cx, cy, r) => { const p=[0,1,2,3,4].map(k=>{const a=(90+k*72)*Math.PI/180; return [f(cx+r*Math.cos(a)), f(cy+r*Math.sin(a))];}); const o=[0,2,4,1,3].map(i=>p[i].join(' ')); return P('M'+o.join(' L')+'Z','none','stroke="var(--gilt)" stroke-width="1"'); };
+
+/* ---------- Major Arcana scenes ---------- */
+const SCENES = [
+// 0 The Fool
+() => C(80,18,7,GI) + rays(80,18,9,13.5,14,'stroke="var(--gilt)"',true)
+  + P("M0 74 L14 58 L26 68 L40 50 L56 70 L68 60 L84 72 L100 64 V84 H0Z", WO, 'fill-opacity=".22" stroke-width=".6"')
+  + P("M0 96 Q28 88 64 92 L72 100 L66 108 L70 130 H0Z", OC, 'fill-opacity=".45"')
+  + E(25,90,6.5,3.2,PH) + C(32,85,2.7,PH) + P("M31 82.5 l-.5 -3 l2 2",'none') + L(21,92,18,97) + L(29,92,31,97) + P("M19 88 q-4 -3 -2 -8",'none')
+  + L(46,78,43,92) + L(54,78,61,88)
+  + P("M45 52 L55 52 L59 79 L41 79Z", OX) + P("M47.5 52 L52.5 52 L53 64 L47 64Z", PH)
+  + L(38,68,70,37,'stroke="var(--ochre)" stroke-width="1.6"') + C(71,35,4.2,OC) + L(54,56,61,48)
+  + L(46,57,37,61) + C(35,61,2.6,PH) + leaf(34,64,60,2)
+  + head(50,47,4.8) + P("M45 45 Q50 38 55 45Z", SA) + P("M54 42 q7 -6 4 -13",'none','stroke="var(--oxblood)" stroke-width="1.4"')
+  + STAR(88,104,2,.8,4,GI) + STAR(80,118,1.5,.6,4,GI),
+// 1 The Magician
+() => lem(50,12,9,'stroke="var(--gilt)" stroke-width="1.6"')
+  + [[8,6],[15,10],[85,10],[92,6],[6,14],[94,14]].map(([x,y])=>C(x,y,3,OX)).join('') + leaf(12,16,30,3) + leaf(88,16,-30,3)
+  + L(57,42,64,27) + L(65,30,67,8,'stroke-width="2.4"') + C(67,8,1.6,PH) + C(65,30,1.6,PH)
+  + P("M42 38 L58 38 L64 84 L36 84Z", OX) + P("M46.5 38 L53.5 38 L55 84 L45 84Z", PH)
+  + P("M44 56 Q50 60 56 56",'none','stroke="var(--sage)" stroke-width="1.8"')
+  + L(43,44,34,58) + L(34,58,32,65)
+  + head(50,32,5)
+  + RC(12,84,76,6,OC) + L(17,90,17,104) + L(83,90,83,104)
+  + U('cups',20,68,9,16,WO) + U('pentacles',34,69,9,15,OC) + U('swords',57,67,9,17,INK) + U('wands',71,67,9,17,OX)
+  + [12,26,40,54,68,82].map((x,i)=>L(x,119,x,128,'stroke="var(--sage)"') + (i%2 ? STAR(x,116,4.6,1.6,6,PH) : C(x,116,3.4,OX))).join(''),
+// 2 The High Priestess
+() => RC(22,18,56,84,WO,'fill-opacity=".22" stroke="none"')
+  + [[30,28],[44,24],[58,28],[72,24],[34,40],[66,40],[30,52],[70,52]].map(([x,y])=>C(x,y,2.6,OX)+P(`M${x-1} ${y-2.6} l1 -1.4 l1 1.4`,'none','stroke-width=".5"')).join('')
+  + RC(8,16,13,104,INK) + RC(6,12,17,5,INK) + T(14.5,34,8,'B',PH)
+  + RC(79,16,13,104,PH) + RC(77,12,17,5,PH) + T(85.5,34,8,'J')
+  + P("M41 50 L59 50 L68 108 L32 108Z", WO) + P("M43 50 L57 50 L56 60 L44 60Z", PH)
+  + L(50,51.5,50,59,'stroke="var(--woad)" stroke-width="1.2"') + L(46.5,55,53.5,55,'stroke="var(--woad)" stroke-width="1.2"')
+  + head(50,44,5)
+  + C(50,35,2.8,PH) + P("M42.5 38 a5 5 0 0 0 4 -6",'none','stroke-width="1.2"') + P("M57.5 38 a5 5 0 0 1 -4 -6",'none','stroke-width="1.2"')
+  + RC(42,70,16,9,PH) + T(50,74.5,4,'TORA')
+  + P("M34 108 Q50 124 66 108 Q50 116 34 108Z", GI) + L(0,121,100,121),
+// 3 The Empress
+() => E(10,50,7,22,SA) + E(22,58,6,16,SA,'fill-opacity=".8"') + E(90,50,7,22,SA) + E(78,58,5,14,SA,'fill-opacity=".8"')
+  + P("M84 24 q3 10 0 20 q-3 10 0 20 q3 10 0 20",'none','stroke="var(--woad)" stroke-width="1.2"') + P("M88 26 q3 10 0 20 q-3 10 0 20 q3 10 0 20",'none','stroke="var(--woad)" stroke-width=".8"')
+  + RC(28,58,44,34,OX,'rx="5"')
+  + P("M41 46 L59 46 L72 98 L28 98Z", PH)
+  + [[42,64],[50,72],[58,64],[46,84],[56,86],[38,92],[62,92],[50,58],[44,74],[56,76]].map(([x,y])=>C(x,y,1.8,OX)).join('')
+  + L(60,58,67,28,'stroke-width="1.4"') + C(67,27,2.6,GI)
+  + head(50,40,5)
+  + Array.from({length:12},(_,i)=>{const a=(-168+i*156/11)*Math.PI/180; return STAR(50+11*Math.cos(a),40+11*Math.sin(a),2,.8,6,GI);}).join('')
+  + P("M26 94 C12 84 14 70 22 72 C24 72 26 75 26 76 C26 75 28 72 30 72 C38 70 40 84 26 94Z", GI)
+  + C(26,79,3,'none','stroke-width="1.1"') + L(26,82,26,88,'stroke-width="1.1"') + L(23.5,85,28.5,85,'stroke-width="1.1"')
+  + [6,14,22,30,38,46,54,62,70,78,86,94].map((x,i)=>L(x,129,x+1,108+(i%3)*2,'stroke="var(--ochre)" stroke-width=".8"')+E(x+1,106+(i%3)*2,1.8,4.2,OC,'stroke-width=".5"')).join(''),
+// 4 The Emperor
+() => P("M0 66 L16 34 L30 54 L46 22 L64 50 L80 30 L100 58 V70 H0Z", OX, 'fill-opacity=".35" stroke-width=".6"')
+  + RC(24,46,52,70,PE) + L(10,116,90,116)
+  + [28,72].map(x=>C(x,49,5.5,PE)+P(`M${x-3} 49 a3 3 0 1 1 3 3 a1.6 1.6 0 1 1 -1.4 -1.6`,'none')).join('')
+  + P("M40 48 L60 48 L65 108 L35 108Z", OX) + RC(37,98,8,14,ST) + RC(55,98,8,14,ST)
+  + head(50,40,5) + P("M45.5 42 Q50 56 54.5 42Z", PH)
+  + P("M44 35.5 L45 28 L48 32 L50 25 L52 32 L55 28 L56 35.5Z", GI)
+  + L(62,52,62,82,'stroke="var(--gilt)" stroke-width="2"') + E(62,47,2.4,3.4,'none','stroke="var(--gilt)" stroke-width="1.7"') + L(58.5,53.5,65.5,53.5,'stroke="var(--gilt)" stroke-width="1.7"')
+  + C(37,68,4.2,GI) + L(37,63.8,37,60) + L(35.4,61.6,38.6,61.6),
+// 5 The Hierophant
+() => RC(6,14,12,90,PE) + RC(82,14,12,90,PE) + RC(4,10,16,5,PE) + RC(80,10,16,5,PE)
+  + P("M37 40 L63 40 L70 102 L30 102Z", OX)
+  + L(46,40,43,102,'stroke="var(--parch-hi)" stroke-width="2.6"') + L(54,40,57,102,'stroke="var(--parch-hi)" stroke-width="2.6"')
+  + L(33,44,33,100,'stroke="var(--gilt)" stroke-width="1.7"') + L(30,48,36,48,'stroke="var(--gilt)" stroke-width="1.4"') + L(29,52.5,37,52.5,'stroke="var(--gilt)" stroke-width="1.4"') + L(28,57,38,57,'stroke="var(--gilt)" stroke-width="1.4"')
+  + L(60,46,67,34) + L(66.4,34,66.4,29.5,'stroke-width="1.1"') + L(68.4,34.4,68.6,30,'stroke-width="1.1"')
+  + head(50,34,5)
+  + P("M44 30 L56 30 L55 24 L45 24Z",GI) + P("M45 24 L55 24 L54 18 L46 18Z",GI) + P("M46 18 L54 18 L50 10Z",GI)
+  + L(41,104,59,120,'stroke="var(--gilt)" stroke-width="1.8"') + L(59,104,41,120,'stroke="var(--gilt)" stroke-width="1.8"')
+  + C(39,102,3,'none','stroke="var(--gilt)" stroke-width="1.4"') + C(61,102,3,'none','stroke="var(--gilt)" stroke-width="1.4"')
+  + P("M57 118 l2.4 -2.4 M43 118 l-2.4 -2.4",'none','stroke="var(--gilt)" stroke-width="1.4"')
+  + P("M10 128 Q12 108 23 108 Q34 108 36 128Z", OX) + head(23,104,4.2) + [[19,116],[27,120],[22,124]].map(([x,y])=>C(x,y,1.5,PH)).join('')
+  + P("M64 128 Q66 108 77 108 Q88 108 90 128Z", PH) + head(77,104,4.2) + [[73,117],[81,120]].map(([x,y])=>STAR(x,y,2.4,.8,6,SA)).join(''),
+// 6 The Lovers
+() => C(50,14,9,GI) + rays(50,14,10.5,15.5,16,'stroke="var(--gilt)"',true)
+  + P("M50 31 C36 15 22 21 20 37 C30 31 40 33 50 35Z", OX) + P("M50 31 C64 15 78 21 80 37 C70 31 60 33 50 35Z", OX)
+  + P("M45 32 L55 32 L58 46 L42 46Z", WO) + head(50,28,4.2)
+  + P("M22 51 c0 -5 6 -6 8 -3 c2 -5 8 -5 10 -1 c2 -4 8 -4 10 0 c2 -4 9 -3 9 2 c4 0 5 4 1 5 h-36 c-4 0 -4 -3 -2 -3z", PH, 'stroke="var(--woad)"')
+  + P("M38 112 L50 70 L62 112Z", OC, 'fill-opacity=".5"')
+  + L(12,112,12,64,'stroke="var(--ochre)" stroke-width="1.6"') + [[7,66],[17,68],[5,77],[19,79],[8,88],[16,92]].map(([x,y])=>P(`M${x} ${y+5} c-2.4 -2.4 -1.4 -6 0 -8 c1.4 2.4 3.6 4.6 0 8z`, OX)).join('')
+  + L(88,112,88,72,'stroke="var(--ochre)" stroke-width="1.8"') + C(88,64,11,SA) + [[84,60],[92,62],[86,68],[94,68],[88,56],[80,66]].map(([x,y])=>C(x,y,1.6,OX)).join('')
+  + P("M86 108 C82 102 92 98 88 92 C84 86 92 82 89 76",'none','stroke="var(--sage)" stroke-width="1.8"') + C(89,75,1.5,SA)
+  + P("M20 80 L28 80 L29 112 L19 112Z", SK) + head(24,75,4.4)
+  + P("M71.5 74 Q76 66 80.5 74 L81.5 86 L70.5 86Z", OC) + P("M72 80 L80 80 L82 112 L70 112Z", SK) + head(76,75,4.4)
+  + L(0,112,100,112),
+// 7 The Chariot
+() => { let w='M0 56 V44'; for(let x=0;x<100;x+=8) w+=` H${x+4} V40 H${x+8} V44`; w+=' H100 V56Z';
+  return P(w, PE, 'fill-opacity=".85" stroke-width=".6"') + P("M10 40 V30 H16 V40 M84 40 V28 H90 V40",'none','stroke-width=".6"')
+  + L(26,20,26,62) + L(74,20,74,62) + RC(22,13,56,7,WO) + [28,36,44,52,60,68].map(x=>STAR(x+2,16.5,1.8,.7,6,GI,'stroke="none"')).join('')
+  + P("M41 38 L59 38 L59 62 L41 62Z", WO) + RC(45,44,10,8,GI,'fill-opacity=".6"')
+  + P("M37 40 a4 4 0 0 0 6 2.4 a3 3 0 0 1 -6 -2.4z", GI) + P("M63 40 a4 4 0 0 1 -6 2.4 a3 3 0 0 0 6 -2.4z", GI)
+  + L(58,46,67,28,'stroke-width="1.6"') + C(67,27,1.8,GI)
+  + head(50,32,5) + STAR(50,24,3.4,1.3,8,GI)
+  + RC(26,60,48,26,PH) + C(50,70,3,GI) + P("M47 70 q-8 -5 -12 0 q6 2.4 12 0Z M53 70 q8 -5 12 0 q-6 2.4 -12 0Z", GI)
+  + [30,70].map(x=>C(x,88,7,'none','stroke-width="1.1"')+L(x-7,88,x+7,88,'stroke-width=".6"')+L(x,81,x,95,'stroke-width=".6"')+L(x-5,83,x+5,93,'stroke-width=".6"')+L(x+5,83,x-5,93,'stroke-width=".6"')).join('')
+  + P("M8 120 Q8 104 20 104 L36 106 Q40 112 38 120Z", INK) + C(17,100,4.6,INK) + P("M12.5 99 L17 92.5 L21.5 99Z", INK) + C(18,99.5,.7,PH,'stroke="none"')
+  + P("M92 120 Q92 104 80 104 L64 106 Q60 112 62 120Z", PH) + C(83,100,4.6,PH) + P("M78.5 99 L83 92.5 L87.5 99Z", PH)
+  + L(0,122,100,122); },
+// 8 Strength
+() => P("M62 42 L76 22 L92 42Z", WO, 'fill-opacity=".3" stroke-width=".6"')
+  + lem(40,17,8,'stroke="var(--gilt)" stroke-width="1.6"')
+  + P("M44 118 Q44 84 72 84 Q94 86 94 108 L94 118Z", OC)
+  + P("M93 104 q8 -4 4 -16",'none','stroke-width="1.2"') + C(97,87,2.2,OX)
+  + C(58,90,14,OX,'fill-opacity=".8"') + C(57,92,9,OC) + C(54,89,.9,INK,'stroke="none"') + C(60,89,.9,INK,'stroke="none"') + P("M54 95 l3 1.5 l3 -1.5",'none') + P("M52 98 q5 5 10 0",'none',`fill="${OX}"`)
+  + L(50,118,50,110,'stroke-width="1.2"') + L(80,118,80,110,'stroke-width="1.2"')
+  + P("M33 42 L47 42 L52 114 L22 114Z", PH)
+  + [[33,60],[37,62],[41,63],[45,64],[49,66],[53,70],[57,74],[61,78]].map(([x,y])=>C(x,y,1.8,OX)).join('')
+  + L(45,54,51,88,'stroke-width="1.3"') + L(39,58,57,97,'stroke-width="1.3"')
+  + head(40,36,5) + [[35,32],[38,30],[42,30],[45,32]].map(([x,y])=>C(x,y,1.5,OX)).join(''),
+// 9 The Hermit
+() => [[14,14],[26,26],[84,18],[72,10],[90,34],[10,40]].map(([x,y])=>STAR(x,y,2.4,.8,4,GI)).join('')
+  + P("M0 130 V112 L36 98 L52 100 L100 118 V130Z", PH, 'stroke="var(--stone)"')
+  + C(67,59,15,GI,'fill-opacity=".2" stroke="none"')
+  + L(33,34,28,110,'stroke="var(--ochre)" stroke-width="2.2"')
+  + P("M42 28 Q50 18 58 28 L68 104 L30 104Z", ST)
+  + head(49,32,4.6) + P("M41.5 30 Q50 16 58.5 30 L56 37 Q50 25 44 37Z", ST) + P("M45.5 34 Q49 48 52.5 34Z", PH)
+  + L(36,44,32,46,'stroke-width="1.2"') + L(58,46,66,50,'stroke-width="1.2"')
+  + L(66,50,66,53) + P("M62 53 L66 50.5 L70 53",'none') + P("M61.5 53 L70.5 53 L69.5 66 L62.5 66Z", GI, 'fill-opacity=".55"')
+  + P("M66 55 L69.6 61.5 L62.4 61.5Z M66 64 L69.6 57.5 L62.4 57.5Z", PH, 'stroke-width=".6"'),
+// 10 Wheel of Fortune
+() => creature('angel',12,14) + creature('eagle',88,14) + creature('bull',12,114) + creature('lion',88,114)
+  + C(50,64,30,WO,'fill-opacity=".22" stroke-width="1.2"') + C(50,64,22,'none') + C(50,64,8,GI)
+  + Array.from({length:8},(_,i)=>{const a=i*Math.PI/4; return L(50+8*Math.sin(a),64-8*Math.cos(a),50+22*Math.sin(a),64-22*Math.cos(a));}).join('')
+  + T(50,38,6,'T') + T(76,64,6,'A') + T(50,90,6,'R') + T(24,64,6,'O')
+  + [['☿',45],['☉',135],['♄',225],['☽',315]].map(([g,d])=>{const a=d*Math.PI/180; return `<text x="${f(50+15*Math.sin(a))}" y="${f(64-15*Math.cos(a))}" font-size="6" text-anchor="middle" dominant-baseline="central" fill="var(--ink)" stroke="none" style="font-family:var(--f-glyph)">${g}︎</text>`;}).join('')
+  + P("M42 35 Q43 29 50 29 Q57 29 58 35Z", WO) + C(50,25.5,3,WO) + L(50,22,50,9,'stroke-width="1.3"') + L(47.5,12.5,52.5,12.5)
+  + P("M21 32 C12 42 25 47 17 57 C10 66 23 71 19 82",'none','stroke="var(--ochre)" stroke-width="2.2"') + C(21,31,2,OC)
+  + P("M76 96 L78 72 L81 66 L82 58 L85 64 L87 58 L88 66 L85 72 L86 96Z", OX) + C(84,67,.6,PH,'stroke="none"'),
+// 11 Justice
+() => RC(6,16,12,98,ST) + RC(82,16,12,98,ST) + RC(4,12,16,5,ST) + RC(80,12,16,5,ST)
+  + RC(18,22,64,80,OX,'fill-opacity=".28" stroke="none"')
+  + P("M36 42 L64 42 L72 114 L28 114Z", OX) + P("M42 42 L58 42 L56 50 L44 50Z", SA)
+  + head(50,36,5) + RC(45,26,10,5,GI) + C(50,28.5,1.2,OX)
+  + L(64,58,64,16,'stroke-width="2"') + L(59.5,58,68.5,58,'stroke-width="1.8"') + L(64,58,64,65,'stroke-width="2.2"') + C(64,66,1.6,GI)
+  + L(57,50,63,60,'stroke-width="1.2"') + L(43,50,35,53,'stroke-width="1.2"')
+  + L(35,46,35,53) + L(24,53,46,53,'stroke-width="1.3"') + L(24,53,20.5,64) + L(24,53,27.5,64) + L(46,53,42.5,64) + L(46,53,49.5,64)
+  + P("M19 64 Q24 69 29 64Z", GI) + P("M41 64 Q46 69 51 64Z", GI) + L(0,114,100,114),
+// 12 The Hanged Man
+() => RC(14,10,72,6,OC) + RC(14,10,6,116,OC) + RC(80,10,6,116,OC)
+  + [[12,30,30],[22,44,-30],[12,62,30],[22,80,-30],[88,28,-30],[78,46,30],[88,66,-30],[78,84,30]].map(([x,y,r])=>leaf(x,y,r,3.4)).join('')
+  + L(50,16,50,30,'stroke-width="1.2"')
+  + L(50,30,50,58,'stroke="var(--oxblood)" stroke-width="4.6"') + P("M50 54 L61 45 L51.5 37",'none','stroke="var(--oxblood)" stroke-width="4.6"')
+  + P("M42 58 L58 58 L57 86 L43 86Z", WO) + L(42,72,58,72,'stroke="var(--gilt)" stroke-width="1.2"')
+  + P("M43 62 L34 79 L43 84",'none','stroke-width="1.2"') + P("M57 62 L66 79 L57 84",'none','stroke-width="1.2"')
+  + C(50,93,10.5,GI,'fill-opacity=".45" stroke="none"') + rays(50,93,11.5,15,18,'stroke="var(--gilt)"')
+  + head(50,92,5.2) + P("M45.5 95 Q50 101 54.5 95",'none',`fill="${OC}"`) + L(0,126,100,126),
+// 13 Death
+() => L(0,82,100,82) + waves(87)
+  + RC(70,54,8,28,PE) + RC(90,54,8,28,PE) + P("M70 54 V51 H72 V54 M76 54 V51 H78 V54 M90 54 V51 H92 V54 M96 54 V51 H98 V54",'none','stroke-width=".6"')
+  + P("M78 82 A6 6 0 0 1 90 82Z", GI) + [-160,-130,-100,-80,-50,-20].map(d=>{const a=d*Math.PI/180; return L(84+8*Math.cos(a),82+8*Math.sin(a),84+11*Math.cos(a),82+11*Math.sin(a),'stroke="var(--gilt)"');}).join('')
+  + L(30,80,28,106,'stroke-width="2"') + L(38,82,38,106,'stroke-width="2"') + L(54,82,57,106,'stroke-width="2"') + P("M62 78 L69 88 L65 95",'none','stroke-width="2"')
+  + E(46,74,20,10,PH) + P("M58 70 L68 52 L76 56 L72 62 L64 76Z", PH) + C(71,56,.9,INK,'stroke="none"') + P("M67 53.5 l2.6 -4 l1 4",'none') + P("M29 69 q-8 3 -10 13",'none','stroke-width="1.2"')
+  + P("M37 46 L47 46 L48 70 L36 70Z", INK) + C(42,40,5,PH) + C(40.3,39.5,1.1,INK,'stroke="none"') + C(43.7,39.5,1.1,INK,'stroke="none"') + L(40,43.4,44,43.4,'stroke-width=".6"')
+  + P("M42 35 q4 -8 10 -6",'none','stroke="var(--oxblood)" stroke-width="1.8"')
+  + L(30,12,30,70,'stroke-width="1.4"') + RC(30,12,22,17,INK)
+  + [0,72,144,216,288].map(d=>{const a=d*Math.PI/180; return C(41+2.8*Math.sin(a),20.5-2.8*Math.cos(a),2.3,PH,'stroke="none"');}).join('') + C(41,20.5,1.5,GI,'stroke="none"')
+  + P("M12 112 L46 112 L46 120 L12 120Z", OX) + head(8,116,4) + P("M1 112 l2 -4 l2 3 l2 -4 l2 3 l2 -3 v5z", GI, 'transform="rotate(-30 6 110)"'),
+// 14 Temperance
+() => P("M0 108 Q20 100 42 106 L42 130 H0Z", WO, 'fill-opacity=".5" stroke-width=".6"')
+  + P("M42 106 Q70 100 100 104 V130 H42Z", SA, 'fill-opacity=".35" stroke-width=".6"')
+  + P("M66 108 Q84 98 74 86 Q66 76 82 64",'none','stroke="var(--ochre)" stroke-width="1.4" stroke-dasharray="2 2"')
+  + P("M74 66 L84 54 L96 66Z", PE, 'stroke-width=".6"') + C(85,49,3.2,GI) + rays(85,49,4.4,7,10,'stroke="var(--gilt)"')
+  + L(12,110,12,90,'stroke="var(--sage)"') + C(12,88,3,WO) + C(9,91.5,2.2,WO) + C(15,91.5,2.2,WO) + L(20,110,20,96,'stroke="var(--sage)"') + C(20,94,2.4,WO)
+  + P("M50 28 C30 8 14 20 16 52 C26 40 38 36 50 36Z", OX) + P("M50 28 C70 8 86 20 84 52 C74 40 62 36 50 36Z", OX)
+  + P("M40 36 L60 36 L66 106 L34 106Z", PH) + RC(46,42,8,8,'none','stroke-width=".7"') + P("M50 43.5 L53 48.5 L47 48.5Z", GI)
+  + E(41,108,4,1.6,SK) + E(58,107,4,1.6,SK)
+  + C(50,26,8.5,GI,'fill-opacity=".45" stroke="none"') + head(50,26,5) + C(50,24.4,1,GI,'stroke="none"')
+  + L(42,48,35,57,'stroke-width="1.2"') + L(58,52,64,70,'stroke-width="1.2"')
+  + U('cups',29,51,10,17,GI) + U('cups',60,67,10,17,GI)
+  + P("M38 55 Q52 51 64 70",'none','stroke="var(--woad)" stroke-width="1.8"'),
+// 15 The Devil
+() => RC(0,0,100,130,INK,'rx="2" stroke="none"') + '<g stroke="var(--gilt)" stroke-width=".8">'
+  + pentagramDown(50,16,8)
+  + P("M40 46 C26 30 12 34 6 50 L14 48 L16 56 L24 50 L28 58 L36 52Z", '#4a352b') + P("M60 46 C74 30 88 34 94 50 L86 48 L84 56 L76 50 L72 58 L64 52Z", '#4a352b')
+  + P("M38 44 L62 44 L64 80 L36 80Z", OC, 'fill-opacity=".9"')
+  + P("M43 32 Q37 22 41 17 M57 32 Q63 22 59 17",'none','stroke-width="1.6"') + C(50,36,8,OC) + C(47,35,1.1,OX,'stroke="none"') + C(53,35,1.1,OX,'stroke="none"') + P("M47 41 l3 4 l3 -4",'none')
+  + L(61,48,70,36,'stroke-width="1.2"') + P("M68 36 l1 -5 m2 5 l1 -5 m1 6 l3 -4",'none')
+  + L(40,52,30,76,'stroke-width="1.8"') + P("M30 76 q-4 4 -1 10 q2 -3 4 -2 q1 -5 -3 -8z", OX)
+  + RC(38,80,24,16,'#4a352b') + C(50,88,2.6,'none')
+  + P("M48 88 Q36 96 28 99",'none','stroke-dasharray="1.6 1.2" stroke-width="1.2"') + P("M52 88 Q64 96 72 99",'none','stroke-dasharray="1.6 1.2" stroke-width="1.2"')
+  + P("M22 99 L30 99 L31 124 L21 124Z", SK) + head(26,94,3.8) + P("M23.5 91 l-1 -3 M28.5 91 l1 -3",'none') + P("M22 118 q-7 2 -7 -5",'none','stroke="var(--oxblood)" stroke-width="1.2"') + P("M15 113 q-2 -3 0 -5 q2 2 0 5z", OX)
+  + P("M70 99 L78 99 L79 124 L69 124Z", SK) + head(74,94,3.8) + P("M71.5 91 l-1 -3 M76.5 91 l1 -3",'none') + P("M79 118 q7 2 6 -5",'none','stroke-width="1.2"') + C(85,112,1.5,WO) + C(87,114,1.5,WO) + C(84.5,115,1.5,WO)
+  + '</g>',
+// 16 The Tower
+() => RC(0,0,100,86,INK,'rx="2" stroke="none"')
+  + P("M6 2 L24 20 L18 22 L36 38 L30 40 L46 52",'none','stroke="var(--gilt)" stroke-width="2.4"')
+  + P("M18 130 L28 104 L40 98 L60 98 L72 104 L84 130Z", PE)
+  + RC(38,38,24,62,PH) + P("M38 38 V33 H42 V38 M46 38 V33 H50 V38 M54 38 V33 H58 V38",'none') + P("M38 33 H42 M46 33 H50 M54 33 H58",'none')
+  + RC(47,52,6,8,OX) + RC(41,70,5,7,OX) + RC(54,70,5,7,OX) + P("M46 100 V90 A4 4 0 0 1 54 90 V100Z", INK)
+  + P("M50 34 c-6 -6 -2 -12 2 -16 c0 6 6 6 4 12 c4 -2 4 -6 4 -8 c4 6 0 14 -10 12z", OX, 'stroke="var(--gilt)" stroke-width=".5"')
+  + P("M62 56 q8 -2 9 -10 q-4 4 -9 3z", OX) + P("M38 74 q-8 -2 -9 -10 q4 4 9 3z", OX) + P("M59 72 q7 -1 8 -8 q-3 3 -8 2z", OX)
+  + `<g transform="rotate(-28 74 22)">${P("M66 26 L67 18 L71 22 L74 15 L77 22 L81 18 L82 26Z", GI)}</g>`
+  + C(24,72,3.4,SK) + P("M20 54 L28 54 L27 69 L21 69Z", OX) + L(21,54,17,45,'stroke="var(--parch-hi)" stroke-width="1.4"') + L(27,54,31,45,'stroke="var(--parch-hi)" stroke-width="1.4"') + L(21,63,13,70,'stroke="var(--parch-hi)" stroke-width="1.2"') + L(27,63,33,72,'stroke="var(--parch-hi)" stroke-width="1.2"')
+  + C(79,84,3.4,SK) + P("M75 66 L83 66 L82 81 L76 81Z", WO) + L(76,66,71,58,'stroke="var(--parch-hi)" stroke-width="1.4"') + L(82,66,87,57,'stroke="var(--parch-hi)" stroke-width="1.4"') + L(76,75,69,79,'stroke="var(--parch-hi)" stroke-width="1.2"') + L(82,75,89,80,'stroke="var(--parch-hi)" stroke-width="1.2"')
+  + [[14,40],[30,56],[10,62],[86,44],[92,60],[68,48],[22,30],[80,30],[64,10],[88,12]].map(([x,y])=>drop(x,y)).join(''),
+// 17 The Star
+() => STAR(50,17,13,4.6,8,GI) + [[16,12],[84,12],[26,32],[74,32],[12,50],[88,50],[50,40]].map(([x,y])=>STAR(x,y,4.4,1.6,8,GI)).join('')
+  + P("M0 100 Q30 92 56 104 L56 130 H0Z", WO, 'fill-opacity=".5" stroke-width=".6"') + P("M56 104 Q76 96 100 98 V130 H56Z", SA, 'fill-opacity=".45" stroke-width=".6"')
+  + L(88,98,88,72,'stroke-width="1.4"') + C(88,66,7,SA) + P("M85 59 q2 -4 5 -3 l3 -1.4 l-2 2.4 q-1 3 -6 2z", PH)
+  + P("M44.5 64 Q51 53 57.5 64 L58.5 78 L43.5 78Z", OC)
+  + P("M45 70 L56 70 L59 92 L43 92Z", SK) + P("M43 90 L59 90 L67 104 L61 107 L54 97 L46 104 L41 103Z", SK)
+  + head(51,64,4.8)
+  + L(46,74,37,79,'stroke-width="1.2"') + L(56,74,64,81,'stroke-width="1.2"')
+  + P("M29 75 h8 l1 3 q2 6 -1 10 h-8 q-3 -4 -1 -10z", OX) + P("M31 86 Q28 96 33 104",'none','stroke="var(--woad)" stroke-width="1.8"')
+  + P("M62 79 h8 l1 3 q2 6 -1 10 h-8 q-3 -4 -1 -10z", OX) + P("M68 92 Q70 98 74 106 M68 92 Q68 99 67 106 M68 92 Q73 96 82 104 M68 92 Q76 94 90 100",'none','stroke="var(--woad)" stroke-width=".9"'),
+// 18 The Moon
+() => C(50,24,15,GI,'fill-opacity=".35"') + P("M50 9 A15 15 0 0 1 50 39 A10 15 0 0 0 50 9Z", GI)
+  + P("M48 15 q-3 4 -1 6 l-2.4 2 l2.2 1 q-1.4 3 1 5",'none') + L(44.5,19,47.5,19,'stroke-width=".8"')
+  + rays(50,24,17,22,24,'stroke="var(--gilt)"',true)
+  + [[30,46],[40,52],[60,52],[70,46],[50,48]].map(([x,y])=>drop(x,y)).join('')
+  + RC(4,50,12,48,PE) + RC(84,50,12,48,PE) + RC(8,58,4,6,INK) + RC(88,58,4,6,INK) + P("M4 50 V46 H8 V50 M12 50 V46 H16 V50 M84 50 V46 H88 V50 M92 50 V46 H96 V50",'none','stroke-width=".7"')
+  + P("M0 98 Q50 88 100 98 V114 H0Z", SA, 'fill-opacity=".35" stroke-width=".6"')
+  + P("M50 116 Q40 102 54 94 Q66 84 50 72 Q44 64 56 56",'none','stroke="var(--ochre)" stroke-width="1.6" stroke-dasharray="2 2"')
+  + E(27,100,7,4,PH) + C(33,92,3.4,PH) + P("M35 89.5 l4.5 -4.5 l-1 5.5z", PH) + P("M31 89.5 l1 -3.6 l2 3",'none') + L(23,103,22,108) + L(31,103,32,108) + P("M20 98 q-4 -2 -3 -6",'none')
+  + E(73,100,7,4,ST) + C(67,92,3.4,ST) + P("M65 89.5 l-4.5 -4.5 l1 5.5z", ST) + P("M69 89.5 l-1 -3.6 l-2 3",'none') + L(77,103,78,108) + L(69,103,68,108) + P("M80 98 q4 -2 3 -6",'none')
+  + RC(0,114,100,16,WO,'fill-opacity=".55" stroke="none"') + waves(118)
+  + E(50,120,3,5,OX) + P("M47.5 116 l-3 -4 l-1 3 M52.5 116 l3 -4 l1 3",'none','stroke="var(--oxblood)" stroke-width="1.6"') + P("M48 124 l-3 3 M52 124 l3 3",'none','stroke="var(--oxblood)"'),
+// 19 The Sun
+() => Array.from({length:16},(_,i)=>{const a=i*Math.PI/8, c=Math.cos(a), s=Math.sin(a); if(i%2) return L(50+18*s,30-18*c,50+27*s,30-27*c,'stroke="var(--gilt)" stroke-width="1.6"'); const px=-c, py=-s; return P(`M${f(50+18*s)} ${f(30-18*c)} Q${f(50+21*s+px*2.6)} ${f(30-21*c+py*2.6)} ${f(50+23*s)} ${f(30-23*c)} T${f(50+28*s)} ${f(30-28*c)}`,'none','stroke="var(--gilt)" stroke-width="1.4"');}).join('')
+  + C(50,30,16,GI) + C(45,27,1.3,INK,'stroke="none"') + C(55,27,1.3,INK,'stroke="none"') + P("M44 35 Q50 40 56 35",'none') + P("M50 28 L49 32 L51 32",'none','stroke-width=".7"')
+  + RC(0,66,100,18,PE) + L(0,72,100,72,'stroke-width=".5"') + L(0,78,100,78,'stroke-width=".5"')
+  + [8,22,36,50,64,78,92].map((x,i)=>L(x+(i%2?0:7),66,x+(i%2?0:7),72,'stroke-width=".5"')+L(x+(i%2?7:0),72,x+(i%2?7:0),78,'stroke-width=".5"')).join('')
+  + [[12,60],[30,56],[70,56],[88,60]].map(([x,y])=>L(x,y,x,70,'stroke="var(--sage)" stroke-width="1.2"')+STAR(x,y,5.6,3,12,GI)+C(x,y,2.4,INK)).join('')
+  + L(36,108,34,126,'stroke-width="2"') + L(42,110,42,126,'stroke-width="2"') + L(60,110,62,126,'stroke-width="2"') + L(66,107,71,123,'stroke-width="2"')
+  + E(50,104,20,9,PH) + P("M66 100 L76 88 L83 92 L77 96 L70 108Z", PH) + C(78,91,.8,INK,'stroke="none"')
+  + P("M44 86 L54 86 L55 100 L43 100Z", SK) + L(44,89,36,82,'stroke-width="1.4"') + L(54,89,62,81,'stroke-width="1.4"')
+  + head(49,81,4.4) + [[45,77.5],[48,76.4],[51,76.4],[54,77.5]].map(([x,y])=>C(x,y,1.2,OX)).join('') + P("M50 76 q4 -8 0 -12",'none','stroke="var(--oxblood)" stroke-width="1.4"')
+  + L(62,82,67,60,'stroke-width="1.2"') + P("M67 60 Q78 56 87 64 Q79 68 66 68Z", OX),
+// 20 Judgement
+() => P("M0 78 L14 56 L28 70 L48 48 L68 72 L84 58 L100 72 V86 H0Z", PH, 'stroke="var(--stone)"')
+  + RC(0,86,100,44,WO,'fill-opacity=".4" stroke="none"') + waves(92) + waves(124)
+  + [[8,100],[38,108],[68,100]].map(([x,y])=>RC(x,y,24,8,INK,'fill-opacity=".8"')).join('')
+  + [[20,100],[50,108],[80,100]].map(([x,y])=>P(`M${x-4} ${y} L${x+4} ${y} L${x+3} ${y-14} L${x-3} ${y-14}Z`, SK)+head(x,y-18,3.4)+L(x-3,y-12,x-8,y-23,'stroke-width="1.2"')+L(x+3,y-12,x+8,y-23,'stroke-width="1.2"')).join('')
+  + P("M50 22 C38 6 26 10 24 28 C32 24 40 26 50 28Z", OX) + P("M50 22 C62 6 74 10 76 28 C68 24 60 26 50 28Z", OX)
+  + P("M45 24 L55 24 L57 38 L43 38Z", WO) + head(50,18,4.2)
+  + L(54,26,77,40,'stroke="var(--gilt)" stroke-width="2"') + P("M75 36 L83 44 L77 46Z", GI)
+  + P("M8 44 c0 -6 8 -8 11 -4 c2 -7 12 -7 14 -1 c3 -5 12 -5 14 0 c3 -5 12 -4 13 2 c4 -3 12 0 10 5 c5 0 6 5 1 6 h-60 c-5 0 -6 -6 -3 -8z", PH, 'stroke="var(--woad)"')
+  + RC(70,46,10,11,PH) + L(75,47.5,75,55.5,'stroke="var(--oxblood)" stroke-width="1.6"') + L(71.5,51,78.5,51,'stroke="var(--oxblood)" stroke-width="1.6"'),
+// 21 The World
+() => creature('angel',12,12) + creature('eagle',88,12) + creature('bull',12,114) + creature('lion',88,114)
+  + E(50,66,24,38,'none','stroke="var(--sage)" stroke-width="3.4"')
+  + Array.from({length:28},(_,i)=>{const a=i*2*Math.PI/28, x=50+24*Math.cos(a), y=66+38*Math.sin(a), tang=Math.atan2(38*Math.cos(a),-24*Math.sin(a))*180/Math.PI; return leaf(x,y,tang+(i%2?30:-30),3);}).join('')
+  + lem(50,28,6,'stroke="var(--oxblood)" stroke-width="1.8"') + lem(50,104,6,'stroke="var(--oxblood)" stroke-width="1.8"')
+  + P("M45 78 L49 78 L47.5 96 L44 96Z", SK) + P("M51 78 L55 78 L60 88 L52 93 L50.6 91 L56 87.5Z", SK)
+  + P("M46 52 L54 52 L55 79 L45 79Z", SK)
+  + P("M45 53 Q60 62 47 76 Q41 84 53 90",'none','stroke="var(--oxblood)" stroke-width="3.6"')
+  + L(46,57,38,63,'stroke-width="1.2"') + L(54,57,62,63,'stroke-width="1.2"')
+  + L(36,55,39,73,'stroke="var(--ochre)" stroke-width="2"') + L(64,55,61,73,'stroke="var(--ochre)" stroke-width="2"')
+  + P("M45.5 47 Q50 38 54.5 47 L55 53 L45 53Z", OC) + head(50,47,4.4)
+];
+
+/* ---------- Minor Arcana vignettes (centred on 0,0) ---------- */
+const sea = (y=12) => P(`M-18 ${y} q1.5 -2 3 0 t3 0 t3 0 t3 0 t3 0 t3 0 t3 0 t3 0 t3 0 t3 0 t3 0 t3 0`,'none','stroke="var(--woad)" stroke-width=".8"');
+const ICON = {
+ sprout:()=>L(-12,12,12,12)+L(0,12,0,-4,'stroke-width="1.4"')+P("M0 4 C-8 3 -11 -3 -11 -8 C-5 -7 -1 -3 0 4Z",SA)+P("M0 -1 C7 -2 10 -8 9 -13 C3 -12 0 -8 0 -1Z",SA),
+ globe:()=>C(0,0,11,WO,'fill-opacity=".35"')+P("M0 -11 C-7 -5 -7 5 0 11 C7 5 7 -5 0 -11 M-11 0 H11 M-9 -6 H9 M-9 6 H9",'none','stroke-width=".7"')+P("M-4 -6 q3 2 1 5 q4 1 2 5",'none',`fill="${SA}" stroke-width=".5"`),
+ ship:()=>P("M-12 3 H12 L8 9 H-8Z",OC)+L(0,3,0,-13)+P("M1 -12 L10 1 H1Z",PH)+P("M-1 -10 L-8 1 H-1Z",PH)+sea(12),
+ arch:()=>L(-11,12,-11,-3,'stroke-width="1.8" stroke="var(--ochre)"')+L(11,12,11,-3,'stroke-width="1.8" stroke="var(--ochre)"')+P("M-13 -3 Q0 -16 13 -3",'none','stroke="var(--sage)" stroke-width="2.6"')+C(-7,-8,1.8,OX)+C(0,-9.5,1.8,OX)+C(7,-8,1.8,OX)+L(-15,12,15,12),
+ clash:()=>L(-14,10,10,-12,'stroke-width="2.2" stroke="currentColor"')+L(14,10,-10,-12,'stroke-width="2.2" stroke="currentColor"')+L(-16,-2,16,2,'stroke-width="2.2" stroke="currentColor"')+STAR(0,-1,5,1.8,8,GI),
+ wreath:()=>{let s=P("M-2 11 C-13 6 -14 -6 -6 -12",'none')+P("M2 11 C13 6 14 -6 6 -12",'none');[[-9.5,6,-50],[-11.5,0,-80],[-10.5,-6,-110],[-7,-10,-140]].forEach(([x,y,r])=>{s+=leaf(x,y,r,3.4)+leaf(-x,y,180-r,3.4)});return s+P("M-5 11 L0 9 L5 11 M-5 11 L-3 15 M5 11 L3 15",'none','stroke="var(--oxblood)" stroke-width="1.6"');},
+ shield:()=>P("M-10 -12 H10 V0 C10 7 0 13 0 13 C0 13 -10 7 -10 0Z",'currentColor','fill-opacity=".5"')+L(0,-12,0,13)+L(-10,-3,10,-3),
+ arrows:()=>[-6,0,6].map(d=>L(-14,6+d,9,-6+d,'stroke-width="1.6" stroke="currentColor"')+P(`M11 ${-7+d} l-6 .4 l2.6 4.4z`,'currentColor')).join(''),
+ fence:()=>{let s='';for(let x=-14;x<=14.1;x+=5.6)s+=P(`M${f(x-1.8)} 12 V-5 L${f(x)} -10 L${f(x+1.8)} -5 V12Z`,'currentColor','fill-opacity=".75"');return s+L(-16,2,16,2,'stroke-width="1.2"');},
+ weight:()=>{let s='';for(let i=0;i<6;i++)s+=L(-15,-10+i*1.6,11,-4+i*1.6,'stroke="currentColor" stroke-width="1.4"');return s+L(-6,-6,-5,-2,'stroke-width="1.4"')+L(4,-4,5,0,'stroke-width="1.4"')+P("M-6 13 L-3 2 L7 1 L5 13",'none','stroke-width="1.2"')+head(10,1,2.6);},
+ flame:()=>P("M0 12 C-9 8 -9 -2 -2 -13 C-2 -4 5 -5 3 -11 C11 -2 10 9 0 12Z",OX)+P("M0 10 C-4 7 -4 2 0 -3 C1 2 5 4 0 10Z",GI),
+ horseshoe:()=>P("M-8 11 V0 A8 8 0 0 1 8 0 V11",'none','stroke-width="4.6"')+P("M-8 11 V0 A8 8 0 0 1 8 0 V11",'none','stroke="var(--stone)" stroke-width="2.8"')+[[-8,6],[-7,-4],[7,-4],[8,6]].map(([x,y])=>C(x,y,.7,INK,'stroke="none"')).join(''),
+ sunflower:()=>L(0,13,0,-2,'stroke="var(--sage)" stroke-width="1.6"')+leaf(-5,7,-30,5)+STAR(0,-4,9,5,12,GI)+C(0,-4,3.6,INK),
+ sun:()=>rays(0,0,8,12.5,16,'stroke="var(--gilt)" stroke-width="1.2"',true)+C(0,0,6.5,GI),
+ dove:()=>L(0,6,0,13,'stroke="var(--woad)" stroke-dasharray="1 1.6"')+P("M-13 1 Q-4 -4 2 -2 L9 -12 L8 -1 Q12 1 15 -1 Q11 7 0 6 Q-8 6 -13 1Z",PH)+C(-7,0,.8,INK,'stroke="none"')+P("M-13 1 l-3 1 l3 1",'none'),
+ rings:()=>C(-4.5,0,7.5,'none','stroke="var(--gilt)" stroke-width="2.2"')+C(4.5,0,7.5,'none','stroke="var(--gilt)" stroke-width="2.2"')+P("M0 -13 l-1.4 -2 a1.4 1.4 0 0 1 1.4 -1 a1.4 1.4 0 0 1 1.4 1z",OX,'stroke-width=".4"'),
+ toast:()=>U('cups',-14,-12,8,14,'currentColor','transform="rotate(-18 -10 -5)"')+U('cups',-4,-14,8,14,'currentColor')+U('cups',6,-12,8,14,'currentColor','transform="rotate(18 10 -5)"')+L(-16,12,16,12)+C(-8,8,1.4,OX)+C(0,9,1.4,SA)+C(8,8,1.4,OX),
+ hand:()=>P("M-17 4 c-3 0 -3 -5 0 -6 c0 -5 6 -7 9 -3 c2 -4 8 -3 9 1 c4 0 5 5 1 6 z",PH,'stroke="var(--woad)"')+L(-2,1,6,0,'stroke="var(--skin)" stroke-width="2.6"')+U('cups',4,-11,9,15,'currentColor')+L(-16,12,16,12),
+ spilled:()=>U('cups',-14,-6,9,15,'currentColor','transform="rotate(100 -9.5 1.5)"')+P("M-6 5 q4 3 8 1 q4 -2 8 2",'none','stroke="var(--woad)" stroke-width="1.6"')+U('cups',7,-10,8,14,'currentColor')+L(-16,12,16,12),
+ flower:()=>L(0,13,0,0,'stroke="var(--sage)" stroke-width="1.4"')+leaf(-4,8,-30,4)+leaf(4,6,30,4)+[0,72,144,216,288].map(a=>{const r=a*Math.PI/180;return C(3.6*Math.sin(r),-5-3.6*Math.cos(r),3,OX);}).join('')+C(0,-5,2,GI),
+ cloud:()=>P("M-16 6 c-4 0 -4 -6 0 -7 c0 -6 7 -8 10 -4 c3 -6 11 -5 12 1 c5 -1 8 4 5 7 c3 2 1 5 -2 5 h-24z",PH,'stroke="var(--woad)"')+STAR(-7,0,3,1,4,GI)+C(1,2,2,OX)+STAR(8,1,2.8,1.1,5,WO)+STAR(0,-13,2.2,.8,4,GI),
+ moonpath:()=>P("M-18 12 L-7 -3 L0 5 L7 -2 L18 12Z",PE)+P("M7 -14 a6 6 0 1 0 6 8 a5 5 0 1 1 -6 -8z",GI)+P("M-3 12 L-1 7 L1 3",'none','stroke-dasharray="1.2 1.2"'),
+ star:()=>STAR(0,0,12,4.6,8,GI)+STAR(-13,-9,2.4,1,4,GI)+STAR(13,-9,2.4,1,4,GI),
+ rainbow:()=>[[16,OX],[13,OC],[10,SA],[7,WO]].map(([r,c])=>P(`M${-r} 11 A${r} ${r} 0 0 1 ${r} 11`,'none',`stroke="${c}" stroke-width="2.6"`)).join('')+L(-18,12,18,12),
+ fish:()=>P("M-11 0 Q-1 -8 8 0 Q-1 8 -11 0Z M8 0 L14 -5 L14 5Z",WO)+C(-6,-1,.9,INK,'stroke="none"')+sea(11),
+ wing:()=>P("M-13 9 C-13 -6 0 -13 15 -11 C9 -9 11 -7 5 -5 C11 -4 9 -2 3 -1 C7 1 5 4 -1 4 C2 6 0 8 -5 8Z",PH),
+ shell:()=>{let s=P("M0 11 L-13 -3 A13 13 0 0 1 13 -3Z",PH);for(let i=1;i<6;i++){const a=Math.PI+i*Math.PI/6;s+=L(0,11,12*Math.cos(a),-3+12*Math.sin(a),'stroke-width=".6"');}return s;},
+ wave:()=>P("M-18 8 Q-12 -10 0 -2 Q-8 -4 -7 3 Q-2 7 4 1 Q10 -5 18 3",'none','stroke="var(--woad)" stroke-width="1.8"')+sea(12),
+ crown:()=>P("M-11 7 L-13 -6 L-5 0 L0 -11 L5 0 L13 -6 L11 7Z",GI)+C(0,2,1.6,OX)+leaf(-14,10,20,4)+leaf(14,10,-20,4),
+ blindfold:()=>L(-14,12,12,-13,'stroke-width="1.8"')+L(14,12,-12,-13,'stroke-width="1.8"')+C(0,0,8,SK)+RC(-9,-3.5,18,4,PH),
+ heart:()=>P("M0 11 C-15 1 -12 -12 -4 -10 C-1 -9 0 -6 0 -5 C0 -6 1 -9 4 -10 C12 -12 15 1 0 11Z",OX)+L(-13,-12,9,9,'stroke-width="1.4"')+L(0,-14,0,13,'stroke-width="1.4"')+L(13,-12,-9,9,'stroke-width="1.4"')+P("M-18 -6 l2 4 M18 -6 l-2 4 M-16 2 l2 4",'none','stroke="var(--woad)"'),
+ tomb:()=>P("M-6 -14 Q0 -20 6 -14 V-6 H-6Z",PH,'stroke="var(--woad)"')+RC(-15,3,30,9,PE)+P("M-11 3 Q-11 -1 -7 -1 H9 Q11 -1 11 3Z",ST)+C(-9,0,2.6,ST)+P("M-2 -1 L-1 -5 L0 -1",'none'),
+ storm:()=>P("M-16 2 c-4 0 -4 -6 0 -7 c0 -6 7 -8 10 -4 c3 -6 11 -5 12 1 c5 -1 8 4 5 7 c3 2 1 5 -2 5 h-24z",ST)+[-10,-4,8].map(x=>L(x,8,x-3,13,'stroke="var(--woad)"')).join('')+P("M3 2 L-1 8 H3 L0 14",'none','stroke="var(--gilt)" stroke-width="1.4"'),
+ boat:()=>P("M-15 3 H15 L11 9 H-11Z",OC)+[-6,-2,2,6].map(x=>L(x,3,x,-9,'stroke="currentColor" stroke-width="1.4"')).join('')+L(12,3,16,-12)+C(-10,0,2.2,ST)+sea(12),
+ footprints:()=>[[-12,9],[-6,5],[0,1],[6,-3],[12,-7]].map(([x,y],i)=>E(x,y+(i%2?2:-2),1.8,3,INK,`transform="rotate(55 ${x} ${y})" stroke="none"`)).join('')+U('swords',8,-14,5,9,'currentColor','transform="rotate(-30 10 -10)"')+U('swords',12,-13,5,9,'currentColor','transform="rotate(-30 14 -9)"'),
+ chain:()=>[-12,-6,0,6,12].map((x,i)=>E(x,0,4,2.4,'none',`stroke-width="1.6" transform="rotate(${i%2?90:0} ${x} 0)"`)).join(''),
+ bed:()=>P("M-16 11 V-2 M16 11 V3",'none','stroke-width="1.4"')+RC(-16,2,32,5,WO)+RC(-16,-1,8,4,PH)+head(-11,-5,3)+L(-13,-2,-13,-9,'stroke-width="1.2"')+L(-9,-2,-9,-9,'stroke-width="1.2"')+P("M9 -12 a4 4 0 1 0 4 6 a3.4 3.4 0 1 1 -4 -6z",GI),
+ sunrise:()=>[-160,-135,-110,-90,-70,-45,-20].map(d=>{const a=d*Math.PI/180;return L(10*Math.cos(a),5+10*Math.sin(a),14*Math.cos(a),5+14*Math.sin(a),'stroke="var(--gilt)"');}).join('')+P("M-8 5 A8 8 0 0 1 8 5Z",GI)+L(-18,5,18,5)+sea(10),
+ birds:()=>[[-9,-6,1],[2,-10,.8],[9,-2,1.1],[-2,4,.7]].map(([x,y,s])=>P(`M${f(x-5*s)} ${y} q${f(2.5*s)} ${f(-3*s)} ${f(5*s)} 0 q${f(2.5*s)} ${f(-3*s)} ${f(5*s)} 0`,'none','stroke-width="1.2"')).join(''),
+ wind:()=>P("M-16 -6 H4 a4 4 0 1 0 -4 -4 M-16 0 H10 a4 4 0 1 1 -4 4 M-16 6 H0 a3 3 0 1 1 -3 3",'none','stroke="var(--woad)" stroke-width="1.4"'),
+ butterfly:()=>E(-6,-4,6,5,PH,'transform="rotate(-20 -6 -4)"')+E(6,-4,6,5,PH,'transform="rotate(20 6 -4)"')+E(-5,5,4,3.4,PH)+E(5,5,4,3.4,PH)+L(0,-8,0,9,'stroke-width="1.6"')+P("M0 -8 l-3 -4 M0 -8 l3 -4",'none'),
+ scales:()=>L(0,-12,0,10,'stroke-width="1.4"')+L(-6,10,6,10,'stroke-width="1.4"')+L(-13,-6,13,-6,'stroke-width="1.4"')+L(-13,-6,-17,3)+L(-13,-6,-9,3)+L(13,-6,9,3)+L(13,-6,17,3)+P("M-18 3 Q-13 8 -8 3Z",GI)+P("M8 3 Q13 8 18 3Z",GI),
+ lemniscate:()=>lem(0,0,13,'stroke="var(--gilt)" stroke-width="2"')+U('pentacles',-11.5,-5,7,10,OC)+U('pentacles',4.5,-5,7,10,OC),
+ cathedral:()=>P("M-10 12 V-2 A10 10 0 0 1 10 -2 V12Z",PH)+L(0,-12,0,12,'stroke-width=".6"')+P("M-10 -2 A10 10 0 0 0 0 8 A10 10 0 0 0 10 -2",'none','stroke-width=".6"')+C(0,-5,2.4,'none','stroke="var(--ochre)"')+L(-14,12,14,12),
+ coins:()=>[0,1,2,3].map(i=>E(0,9-i*4,10,3,GI)).join('')+P("M-12 -7 Q0 -17 12 -7",'none','stroke-width="1.4"'),
+ snow:()=>P("M-6 12 V0 A6 6 0 0 1 6 0 V12Z",GI,'fill-opacity=".75"')+L(0,-6,0,12,'stroke-width=".6"')+[[-14,-8],[12,-10],[-12,6],[14,4],[-4,-12]].map(([x,y])=>P(`M${x-2} ${y} h4 M${x} ${y-2} v4 M${f(x-1.4)} ${f(y-1.4)} l2.8 2.8 M${f(x+1.4)} ${f(y-1.4)} l-2.8 2.8`,'none','stroke-width=".7"')).join(''),
+ hourglass:()=>L(-8,-12,8,-12,'stroke-width="1.8"')+L(-8,12,8,12,'stroke-width="1.8"')+P("M-6 -12 L-1 0 L-6 12 H6 L1 0 L6 -12Z",PH)+P("M-3 -6 H3 L0 -1Z",OC)+P("M-5 11 L0 6 L5 11Z",OC),
+ hammer:()=>L(-6,12,7,-3,'stroke="var(--ochre)" stroke-width="2.4"')+RC(1,-12,13,6,ST,'transform="rotate(40 7.5 -9)"')+U('pentacles',-17,-6,8,13,OC),
+ tree:()=>L(0,12,0,-2,'stroke="var(--ochre)" stroke-width="2.4"')+C(0,-6,9,SA)+[[-4,-8],[3,-10],[5,-3],[-5,-2],[0,-5]].map(([x,y])=>C(x,y,1.4,GI)).join('')+L(-14,12,14,12),
+ field:()=>[0,1,2,3].map(i=>P(`M-18 ${12-i*3} Q0 ${8-i*4} 18 ${12-i*3}`,'none','stroke="var(--ochre)"')).join('')+C(10,-8,2.4,GI)+rays(10,-8,3.4,5.4,8,'stroke="var(--gilt)" stroke-width=".7"')+L(-8,2,-8,-6,'stroke="var(--sage)"')+leaf(-10,-4,-40,3),
+ grapes:()=>leaf(6,-9,-20,6)+L(0,-13,1,-7,'stroke-width="1.2"')+[[-3,-4],[3,-4],[0,0],[-5,0],[5,0],[-2,4],[2,4],[0,8]].map(([x,y])=>C(x,y,2.4,WO)).join('')
+};
+
+/* ---------- Data ---------- */
+const ROMAN = ['0','I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII','XIII','XIV','XV','XVI','XVII','XVIII','XIX','XX','XXI'];
+const MAJORS = [
+ ['The Fool','♅','Uranus','new beginnings, innocence, spontaneity, free spirit, leap of faith, adventure, potential, curiosity, openness','recklessness, naivety, foolish risk, hesitation, fear of the unknown, carelessness, poor judgment, holding back','the cliff’s edge, white rose, bundle on a staff, little dog, bright sun'],
+ ['The Magician','☿','Mercury','willpower, manifestation, skill, resourcefulness, concentration, action, inspired power, mastery, confidence','manipulation, trickery, untapped talent, scattered focus, deception, poor planning, self-doubt, illusion','infinity sign, wand raised to the sky, finger pointing to earth, the four suit tools, roses and lilies'],
+ ['The High Priestess','☽','the Moon','intuition, mystery, the subconscious, hidden knowledge, inner voice, stillness, secrets, patience, sacred wisdom','secrets withheld, ignored intuition, surface thinking, repressed feelings, confusion, withdrawal, silence','black and white pillars, veil of pomegranates, lunar crown, half-hidden scroll, crescent moon'],
+ ['The Empress','♀','Venus','abundance, fertility, nurture, beauty, sensuality, nature, creativity, comfort, motherhood','dependence, smothering, creative block, neglect, insecurity, stagnation, emptiness, overgiving','crown of twelve stars, Venus shield, ripe wheat, flowing stream, forest'],
+ ['The Emperor','♈','Aries','authority, structure, stability, leadership, protection, discipline, father figure, order, control','rigidity, domination, tyranny, stubbornness, lack of discipline, coldness, abuse of power, chaos','ram-headed stone throne, ankh sceptre, orb, armour under the robe, barren mountains'],
+ ['The Hierophant','♉','Taurus','tradition, institutions, spiritual guidance, ritual, conformity, education, mentorship, shared values, belief','rebellion, unorthodoxy, nonconformity, questioning dogma, personal beliefs, restriction, breaking convention','triple crown, hand raised in blessing, crossed keys, two acolytes, temple pillars'],
+ ['The Lovers','♊','Gemini','love, union, harmony, partnership, a meaningful choice, aligned values, attraction, trust, commitment','imbalance, disharmony, misalignment, temptation, poor choices, separation, conflicting values, self-doubt','angel and sun above, two figures, tree of knowledge with serpent, tree of flames, mountain'],
+ ['The Chariot','♋','Cancer','determination, willpower, victory, control, focus, ambition, momentum, self-discipline, triumph','lack of direction, loss of control, aggression, opposition, scattered energy, stalled progress, defeat','starry canopy, black and white sphinxes, crescent-moon armour, walled city behind'],
+ ['Strength','♌','Leo','courage, compassion, inner strength, patience, gentle influence, self-control, resilience, calm confidence','self-doubt, weakness, insecurity, raw emotion, impatience, lack of confidence, inner turmoil','woman gently closing the lion’s jaws, infinity sign, garland of roses'],
+ ['The Hermit','♍','Virgo','introspection, solitude, soul-searching, inner guidance, wisdom, contemplation, retreat, patience, truth-seeking','isolation, loneliness, withdrawal, reclusiveness, losing your way, refusing help, paranoia','lantern holding a six-pointed star, staff, grey cloak, snowy peak, night sky'],
+ ['Wheel of Fortune','♃','Jupiter','cycles, fate, destiny, turning point, luck, change, karma, opportunity, life’s rhythm','bad luck, resisting change, setbacks, breaking cycles, loss of control, unexpected delays','turning wheel lettered T-A-R-O, sphinx on top, descending serpent, rising Anubis, four winged creatures'],
+ ['Justice','♎','Libra','fairness, truth, law, cause and effect, accountability, balance, clarity, integrity, honest decision','injustice, dishonesty, unfairness, avoiding accountability, bias, legal trouble, imbalance','upright double-edged sword, balanced scales, square crown, pillars and veil'],
+ ['The Hanged Man','♆','Neptune','surrender, pause, letting go, new perspective, sacrifice, waiting, suspension, insight, acceptance','stalling, resistance, indecision, needless sacrifice, delays, martyrdom, feeling stuck','hanging by one foot from a living tree, legs crossed in a figure four, glowing halo'],
+ ['Death','♏','Scorpio','endings, transformation, transition, release, closure, renewal, change, letting go, rebirth','resisting change, stagnation, fear of endings, lingering, inability to move on, decay','skeleton rider on a white horse, black banner with white rose, fallen king, sun rising between towers'],
+ ['Temperance','♐','Sagittarius','balance, moderation, patience, harmony, blending, purpose, healing, calm, the middle path','excess, imbalance, haste, discord, extremes, overindulgence, lack of long-term vision','angel pouring water between two cups, one foot on land and one in water, winding path, irises'],
+ ['The Devil','♑','Capricorn','attachment, temptation, bondage, addiction, materialism, the shadow self, obsession, restriction, lust','release, breaking free, detachment, reclaiming power, facing the shadow, freedom, recovery','inverted pentagram, bat wings, torch held low, loose chains, horned and tailed figures'],
+ ['The Tower','♂','Mars','sudden upheaval, revelation, collapse, chaos, awakening, broken illusions, disruption, truth exposed','disaster averted, fear of change, delayed reckoning, resisting collapse, inner upheaval, lingering crisis','lightning strike, crown knocked from the top, flames from the windows, falling figures, rocky peak'],
+ ['The Star','♒','Aquarius','hope, renewal, faith, healing, inspiration, serenity, generosity, spirituality, calm after the storm','despair, lost faith, discouragement, disconnection, hopelessness, insecurity, lack of inspiration','great eight-pointed star with seven smaller stars, two jugs of water, pool, ibis in a tree'],
+ ['The Moon','♓','Pisces','illusion, intuition, dreams, the unconscious, uncertainty, anxiety, mystery, imagination, hidden truths','confusion lifting, repressed fears surfacing, released anxiety, truth revealed, clarity, misinterpretation','moon with a face, dog and wolf howling, crayfish crawling from the pool, two towers, winding path'],
+ ['The Sun','☉','the Sun','joy, success, vitality, positivity, warmth, celebration, confidence, clarity, childlike wonder','temporary gloom, dimmed enthusiasm, delays, overconfidence, unrealistic expectations, sadness','radiant sun with a face, child on a white horse, red banner, sunflowers over a garden wall'],
+ ['Judgement','♇','Pluto','awakening, reckoning, rebirth, absolution, inner calling, reflection, forgiveness, evaluation, renewal','self-doubt, harsh self-judgment, ignoring the call, regret, refusal to learn, indecision','angel’s trumpet, banner with a red cross, figures rising from coffins, snowy mountains'],
+ ['The World','♄','Saturn','completion, wholeness, fulfilment, accomplishment, integration, travel, celebration, closure, unity','unfinished business, lack of closure, delays, incompletion, shortcuts, emptiness, stagnation','laurel wreath, dancer holding two wands, red ribbons, angel, eagle, bull and lion in the corners']
+];
+const SUITS = [
+ {key:'wands', name:'Wands', element:'Fire', color:'var(--oxblood)'},
+ {key:'cups', name:'Cups', element:'Water', color:'var(--woad)'},
+ {key:'swords', name:'Swords', element:'Air', color:'var(--ink)'},
+ {key:'pentacles', name:'Pentacles', element:'Earth', color:'var(--ochre)'}
+];
+const RANKS = ['Ace','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Page','Knight','Queen','King'];
+const MINOR = {
+ wands:[
+  ['inspiration, new venture, creative spark, potential, enthusiasm, growth, birth of an idea, passion','delays, lack of motivation, false start, creative block, hesitation, missed spark, frustration','sprout','a sprouting branch'],
+  ['planning, future vision, decisions, discovery, leaving comfort, bold choice, ambition, progress','fear of the unknown, poor planning, indecision, playing it safe, staying put, restlessness','globe','the world held in hand'],
+  ['expansion, foresight, progress, ventures abroad, opportunity, leadership, awaiting returns','obstacles, delays, frustration, lack of foresight, playing small, setbacks','ship','ships returning across the sea'],
+  ['celebration, homecoming, harmony, community, joy, milestone, stability, marriage','instability, transition, tension at home, cancelled celebration, lack of support','arch','a garlanded archway'],
+  ['competition, conflict, rivalry, disagreement, tension, clashing opinions, struggle','avoiding conflict, tension released, compromise, inner conflict, truce','clash','staves clashing'],
+  ['victory, recognition, public praise, success, confidence, progress, reward','ego, fall from grace, lack of recognition, self-doubt, arrogance','wreath','a victor’s laurel wreath'],
+  ['defiance, standing your ground, perseverance, protection, challenge, conviction','overwhelm, giving up, exhaustion, feeling attacked, yielding','shield','a defended position'],
+  ['swift action, momentum, news arriving, movement, travel, rapid change, alignment','delays, frustration, haste, waiting, slowing down, scattered energy','arrows','staves flying through the air'],
+  ['resilience, persistence, last stand, courage, boundaries, test of faith, grit','exhaustion, paranoia, defensiveness, giving up, stubbornness','fence','a palisade of staves'],
+  ['burden, responsibility, overwork, stress, obligation, hard effort, duty','letting go, delegating, release, collapse under the weight, saying no','weight','a heavy bundle carried alone'],
+  ['curiosity, enthusiasm, discovery, free spirit, exploration, new ideas, a messenger','scattered energy, false starts, lack of direction, impatience, boredom','flame','a salamander’s flame'],
+  ['adventure, passion, impulsiveness, energy, bold action, charm, travel','recklessness, frustration, haste, scattered energy, delays, anger','horseshoe','a galloping horse'],
+  ['confidence, warmth, determination, courage, independence, vibrancy, magnetism','jealousy, insecurity, demanding, selfishness, temper','sunflower','a sunflower'],
+  ['vision, leadership, boldness, enterprise, honour, inspiration, the big picture','impulsiveness, overbearing, ruthless, arrogance, impossible expectations','sun','a blazing sun']
+ ],
+ cups:[
+  ['new love, emotional beginnings, compassion, creativity, intimacy, overflowing feeling, spiritual gift','blocked emotions, emptiness, repressed feelings, unrequited love, sadness','dove','a dove descending to the cup'],
+  ['partnership, mutual attraction, unity, connection, respect, harmony, love','breakup, imbalance, distrust, tension, miscommunication','rings','two joined rings'],
+  ['friendship, celebration, community, joy, reunion, collaboration, sisterhood','overindulgence, gossip, isolation, a third party, cancelled plans','toast','three cups raised together'],
+  ['apathy, contemplation, reevaluation, discontent, a missed offer, withdrawal, meditation','renewed interest, new awareness, acceptance, seizing the opportunity','hand','a cup offered from a cloud'],
+  ['loss, grief, regret, disappointment, mourning, dwelling on the negative','acceptance, forgiveness, moving on, recovery, seeing what remains','spilled','spilled cups, two still standing'],
+  ['nostalgia, childhood, innocence, memories, reunion, kindness, simple joys','living in the past, rose-tinted memories, leaving home, independence','flower','a flower given as a gift'],
+  ['choices, fantasy, illusion, wishful thinking, imagination, temptation, daydreams','clarity, alignment, sober judgment, decision made, reality check','cloud','visions floating in the clouds'],
+  ['walking away, seeking deeper meaning, disillusion, leaving behind, a journey, withdrawal','fear of change, aimless drifting, staying too long, avoidance','moonpath','a moonlit path into the mountains'],
+  ['contentment, wishes fulfilled, satisfaction, gratitude, pleasure, comfort','smugness, dissatisfaction, materialism, overindulgence','star','the wish star'],
+  ['harmony, family, lasting happiness, fulfilment, home, alignment, emotional security','broken home, disconnection, misaligned values, domestic conflict','rainbow','a rainbow over the home'],
+  ['creative opportunity, intuitive message, curiosity, sensitivity, dreaminess, new feelings','emotional immaturity, creative block, insecurity, escapism','fish','a fish leaping from the water'],
+  ['romance, charm, following the heart, imagination, an invitation, idealism','moodiness, unrealistic expectations, jealousy, disappointment','wing','a winged helm'],
+  ['compassion, emotional security, intuition, care, calm, empathy, nurturing','codependence, insecurity, emotional overwhelm, martyrdom','shell','a scallop shell'],
+  ['emotional balance, diplomacy, generosity, wisdom, calm control, counsel','manipulation, volatility, coldness, moodiness, repression','wave','calm over rough seas']
+ ],
+ swords:[
+  ['clarity, breakthrough, truth, new idea, mental force, justice, sharp focus','confusion, miscommunication, chaos, clouded judgment, harsh words','crown','a crowned blade'],
+  ['difficult choice, stalemate, blocked emotions, avoidance, truce, indecision','information overload, confusion, lesser of two evils, release of tension','blindfold','a blindfold and crossed swords'],
+  ['heartbreak, sorrow, grief, painful truth, separation, hurt, rejection','healing, forgiveness, recovery, releasing pain, optimism','heart','a heart pierced by three swords'],
+  ['rest, recovery, contemplation, retreat, recuperation, meditation, pause','restlessness, burnout, stagnation, exhaustion, forced rest','tomb','a knight at rest'],
+  ['conflict, defeat, winning at a cost, tension, betrayal, hollow victory, ego','reconciliation, lingering resentment, making amends, regret','storm','storm clouds after the fight'],
+  ['transition, moving on, calmer waters, travel, leaving behind, recovery','unfinished business, resistance to change, emotional baggage, stuck','boat','a ferry crossing to calmer water'],
+  ['deception, strategy, stealth, cunning, getting away with it, secrecy','confession, getting caught, conscience, coming clean','footprints','footprints sneaking away'],
+  ['restriction, feeling trapped, self-limiting beliefs, victim mentality, powerlessness','release, new perspective, freedom, self-acceptance','chain','binding chains'],
+  ['anxiety, worry, sleepless nights, fear, despair, nightmares, guilt','hope returning, recovery from despair, facing fears, relief','bed','a sleepless bed at night'],
+  ['painful ending, rock bottom, betrayal, loss, crisis, finality','recovery, regeneration, survival, resisting an end, rising again','sunrise','dawn breaking after the end'],
+  ['curiosity, new ideas, vigilance, mental energy, truth-seeking, communication','gossip, hasty words, all talk, deception, scattered thoughts','birds','birds on the wind'],
+  ['ambition, action, drive, assertiveness, fast thinking, determination','impulsiveness, no direction, rashness, burnout, aggression','wind','a charging wind'],
+  ['independence, clear thinking, honesty, perception, boundaries, directness','coldness, bitterness, cruelty, harsh judgment, isolation','butterfly','a butterfly'],
+  ['intellect, authority, truth, ethics, clear logic, fair judgment','misuse of power, manipulation, tyranny, cold calculation','scales','scales of judgment']
+ ],
+ pentacles:[
+  ['new opportunity, prosperity, manifestation, abundance, security, a new job','missed chance, poor planning, scarcity, bad investment','arch','a garden gateway'],
+  ['balance, adaptability, juggling priorities, flexibility, time management','overwhelm, disorganisation, overcommitment, dropped balls','lemniscate','coins juggled in an infinity loop'],
+  ['teamwork, craftsmanship, learning, collaboration, skill, planning','lack of teamwork, mediocrity, disregard for skill, misalignment','cathedral','a cathedral arch'],
+  ['security, saving, control, conservatism, stability, holding on','greed, possessiveness, scarcity thinking, hoarding, letting go','coins','coins guarded tight'],
+  ['hardship, scarcity, isolation, poverty, worry, exclusion, illness','recovery, help arriving, spiritual renewal, end of hardship','snow','snow outside a lit window'],
+  ['generosity, charity, sharing, giving and receiving, fairness, support','debt, strings attached, inequality, one-sided charity','scales','merchant’s scales'],
+  ['patience, long-term investment, perseverance, assessment, harvest, reward','impatience, poor return, frustration, wasted effort','hourglass','an hourglass'],
+  ['diligence, mastery, skill, apprenticeship, detail, dedication, craft','perfectionism, lack of focus, repetitive work, mediocrity','hammer','a craftsman’s hammer'],
+  ['independence, luxury, self-sufficiency, refinement, reward, discipline','overwork, financial setbacks, superficiality, dependence','birds','a falcon in the vineyard'],
+  ['legacy, wealth, family, inheritance, tradition, long-term success','financial loss, family disputes, instability, broken legacy','tree','the family tree'],
+  ['ambition, study, a fresh start, manifestation, diligence, opportunity','procrastination, lack of progress, missed lessons, laziness','sprout','a seedling'],
+  ['hard work, routine, reliability, patience, responsibility, method','boredom, stagnation, laziness, perfectionism','field','a ploughed field'],
+  ['nurturing, practicality, comfort, generosity, home, security','self-neglect, work-home imbalance, smothering, jealousy','flower','roses in the garden'],
+  ['abundance, security, discipline, wealth, leadership, provision','greed, stubbornness, materialism, indulgence','grapes','a vine heavy with grapes']
+ ]
+};
+
+const DECK = [];
+MAJORS.forEach((m, i) => DECK.push({id:i, major:true, number:i, name:m[0], glyph:m[1], ruler:m[2], up:m[3], rev:m[4], look:m[5]}));
+SUITS.forEach(s => RANKS.forEach((r, i) => {
+  const d = MINOR[s.key][i];
+  const pre = i < 10 ? (i ? `${i+1} ${s.name.toLowerCase()}` : `a single ${s.name.toLowerCase().replace(/s$/,'')}`) : `the ${r.toLowerCase()} holding a ${s.name.toLowerCase().replace(/s$/,'')}`;
+  DECK.push({id:DECK.length, major:false, suit:s, rank:i, name:r + ' of ' + s.name, up:d[0], rev:d[1], icon:d[2], look:`${pre}, ${d[3]}`});
+}));
+const IDS = DECK.map(c => c.id);
+const TOTAL = DECK.length;
+
+/* ---------- Card faces ---------- */
+function sparkle(x, y, s){ return `<path d="M${x} ${y-s}Q${x} ${y} ${x+s} ${y}Q${x} ${y} ${x} ${y+s}Q${x} ${y} ${x-s} ${y}Q${x} ${y} ${x} ${y-s}Z"/>`; }
+(function buildBack(){
+  let r = '';
+  for(let i=0;i<32;i++){ const a=i*Math.PI/16, r1=29, r2=i%2?33:36.5; r += L(50+r1*Math.sin(a),85-r1*Math.cos(a),50+r2*Math.sin(a),85-r2*Math.cos(a)); }
+  const half = `<path d="M50 31a10 10 0 1 0 0 20a12 12 0 0 1 0-20z" fill="currentColor"/>
+    <circle cx="50" cy="56" r="1.2" fill="currentColor"/><circle cx="50" cy="22" r="1" fill="currentColor"/>
+    <g fill="currentColor">${sparkle(20,22,4)}${sparkle(80,22,4)}${sparkle(35,18,1.6)}${sparkle(65,18,1.6)}</g>
+    <path d="M14 46 L22 40 M86 46 L78 40" stroke-width=".5"/>`;
+  document.getElementById('cardback').innerHTML = `<g fill="none" stroke="currentColor" stroke-width=".9">
+      <rect x="4" y="4" width="92" height="162" rx="5"/><rect x="7.5" y="7.5" width="85" height="155" rx="3" stroke-width=".45"/>
+      <circle cx="50" cy="85" r="26"/><circle cx="50" cy="85" r="23.5" stroke-width=".4"/>
+      <circle cx="50" cy="85" r="39" stroke-width=".35" stroke-dasharray="1 2.2"/>
+      <g stroke-width=".55">${r}</g>
+      <polygon points="${starPts(50,85,19,6.5,8)}" fill="currentColor" fill-opacity=".9" stroke="none"/>
+      <circle cx="50" cy="85" r="3" fill="var(--back-2)" stroke="currentColor" stroke-width=".6"/>
+      ${half}<g transform="rotate(180 50 85)">${half}</g></g>`;
+})();
+
+const svgWrap = (inner, style='') => `<svg viewBox="0 0 100 130" aria-hidden="true" style="${style}"><g stroke="var(--ink)" stroke-width=".9" stroke-linejoin="round" stroke-linecap="round">${inner}</g></svg>`;
+const PIPS = {
+  1:[[.5,.5]], 2:[[.5,.25],[.5,.75]], 3:[[.5,.18],[.5,.5],[.5,.82]],
+  4:[[.3,.26],[.7,.26],[.3,.74],[.7,.74]], 5:[[.3,.22],[.7,.22],[.5,.5],[.3,.78],[.7,.78]],
+  6:[[.3,.18],[.7,.18],[.3,.5],[.7,.5],[.3,.82],[.7,.82]],
+  7:[[.3,.16],[.7,.16],[.5,.33],[.3,.5],[.7,.5],[.3,.84],[.7,.84]],
+  8:[[.3,.14],[.7,.14],[.5,.32],[.3,.5],[.7,.5],[.5,.68],[.3,.86],[.7,.86]],
+  9:[[.3,.12],[.7,.12],[.3,.37],[.7,.37],[.5,.5],[.3,.63],[.7,.63],[.3,.88],[.7,.88]],
+  10:[[.3,.12],[.7,.12],[.5,.25],[.3,.37],[.7,.37],[.3,.63],[.7,.63],[.5,.75],[.3,.88],[.7,.88]]
+};
+function courtFigure(rank, s){
+  const col = s.color, k = s.key;
+  if(rank === 10) return L(10,86,90,86) + L(46,66,45,86,'stroke-width="1.6"') + L(54,66,56,86,'stroke-width="1.6"')
+    + P("M42 34 L58 34 L61 68 L39 68Z", col, 'fill-opacity=".6"') + L(40.5,52,59.5,52,'stroke-width="1.4"')
+    + L(43,40,38,54,'stroke-width="1.2"') + L(57,38,63,30,'stroke-width="1.2"')
+    + head(50,27,5) + P("M44 26 Q50 15 57 23 L61 22 L56 27Z", col) + U(k,59,4,12,21,col);
+  if(rank === 11) return L(10,88,90,88) + L(28,62,25,86,'stroke-width="2"') + L(36,64,36,86,'stroke-width="2"') + L(62,64,67,86,'stroke-width="2"') + P("M70 62 L78 72 L74 80",'none','stroke-width="2"')
+    + P("M26 54 q-8 4 -9 16",'none','stroke-width="1.4"') + E(50,58,24,10,PE) + P("M68 54 L80 36 L88 40 L84 46 L74 64Z", PE) + C(82,40,.8,INK,'stroke="none"') + P("M71 52 L79 38",'none','stroke-width="2"')
+    + P("M42 32 L54 32 L56 56 L40 56Z", col, 'fill-opacity=".6"') + L(46,56,44,68,'stroke-width="1.6"')
+    + head(48,26,4.6) + P("M43 26 Q48 17 53 26Z", ST) + P("M50 19 q6 -6 12 -2",'none','stroke="var(--oxblood)" stroke-width="1.6"')
+    + L(53,38,62,32,'stroke-width="1.2"') + U(k,58,9,11,20,col);
+  if(rank === 12) return L(10,86,90,86) + RC(30,22,40,62,PE,'rx="3"') + P("M30 22 Q50 8 70 22Z", PE)
+    + P("M42 36 L58 36 L68 86 L32 86Z", col, 'fill-opacity=".6"')
+    + L(57,42,61,50,'stroke-width="1.2"') + L(43,42,40,56,'stroke-width="1.2"')
+    + head(50,30,5) + P("M43.5 31 Q50 20 56.5 31 L57 40 L43 40Z", OC) + head(50,30,4.6) + P("M44 26 L45 19 L48 23 L50 16 L52 23 L55 19 L56 26Z", GI)
+    + U(k,56,42,12,21,col);
+  return L(10,88,90,88) + RC(26,18,48,70,PE) + P("M26 18 L50 6 L74 18Z", PE) + U(k,29,60,8,14,col)
+    + P("M40 34 L60 34 L70 88 L30 88Z", col, 'fill-opacity=".6"')
+    + L(58,44,63,50,'stroke-width="1.2"') + L(42,44,40,58,'stroke-width="1.2"')
+    + head(50,28,5) + P("M46 30 Q50 41 54 30Z", PE) + P("M43 24 L44 15 L47 20 L50 12 L53 20 L56 15 L57 24Z", GI)
+    + U(k,58,28,12,22,col);
+}
+function minorArt(c){
+  const s = c.suit;
+  let body = '';
+  if(c.rank < 10){
+    const n = c.rank + 1;
+    const [w, h] = n===1 ? [30,50] : n<=3 ? [18,30] : n<=6 ? [15,25] : [12,20];
+    PIPS[n].forEach(([px,py]) => { body += U(s.key, 10+px*80-w/2, 4+py*80-h/2, w, h, s.color); });
+    if(n===1) body += [[20,18],[80,18],[20,70],[80,70]].map(([x,y])=>STAR(x,y,3,.9,4,GI)).join('');
+  } else body = courtFigure(c.rank, s);
+  body += L(20,91,80,91,'stroke-width=".5"') + `<g transform="translate(50 110)">${ICON[c.icon]()}</g>`;
+  return svgWrap(body, `color:${s.color}`);
+}
+function frontHTML(c){
+  let numeral, word = false;
+  if(c.major) numeral = ROMAN[c.number];
+  else if(c.rank === 0){ numeral = 'Ace'; word = true; }
+  else if(c.rank < 10) numeral = ROMAN[c.rank+1];
+  else { numeral = c.suit.element; word = true; }
+  return `<div class="frame"><div class="numeral${word?' word':''}">${numeral}</div>
+    <div class="art">${c.major ? svgWrap(SCENES[c.number]()) : minorArt(c)}</div>
+    <div class="cname">${c.name}</div></div>`;
+}
+function metaLine(c){
+  return c.major ? `Major Arcana ${ROMAN[c.number]} &middot; <span style="font-family:var(--f-glyph)">${c.glyph}︎</span> ruled by ${c.ruler}`
+                 : `Minor Arcana &middot; ${c.suit.name}, the suit of ${c.suit.element}`;
+}
+
+/* ---------- Spreads ---------- */
+const SPREADS = {
+ single:{name:'Single Card', t:'Single Card', pos:[{n:'The Card', d:'The heart of the matter, or the message for today', x:0, y:0}]},
+ ppf:{name:'Past · Present · Future', t:'Past Present Future', pos:[
+   {n:'Past', d:'What has shaped this moment', x:0, y:0},
+   {n:'Present', d:'Where things stand now', x:1.2, y:0},
+   {n:'Future', d:'Where the current path leads', x:2.4, y:0}]},
+ sao:{name:'Situation · Action · Outcome', t:'Situation Action Outcome', pos:[
+   {n:'Situation', d:'The circumstances as they are', x:0, y:0},
+   {n:'Action', d:'What you can do', x:1.2, y:0},
+   {n:'Outcome', d:'What is likely to follow', x:2.4, y:0}]},
+ mbs:{name:'Mind · Body · Spirit', t:'Mind Body Spirit', pos:[
+   {n:'Mind', d:'Thoughts, beliefs and mental state', x:0, y:0},
+   {n:'Body', d:'Health, work and the material world', x:1.2, y:0},
+   {n:'Spirit', d:'Purpose, intuition and inner life', x:2.4, y:0}]},
+ cross:{name:'Five-Card Cross', t:'Five-Card Cross', pos:[
+   {n:'Present', d:'The core of the question', x:1.25, y:1.12},
+   {n:'Past', d:'Influences now passing', x:0, y:1.12},
+   {n:'Future', d:'What is approaching', x:2.5, y:1.12},
+   {n:'Foundation', d:'What lies beneath', x:1.25, y:2.24},
+   {n:'Guidance', d:'Counsel for the way forward', x:1.25, y:0}]},
+ horseshoe:{name:'Horseshoe', t:'Horseshoe', pos:[
+   {n:'Past', d:'Recent events', x:0, y:0},
+   {n:'Present', d:'The current state of things', x:1.2, y:.45},
+   {n:'Hidden Influences', d:'What you cannot yet see', x:2.4, y:.9},
+   {n:'Obstacles', d:'What stands in the way', x:3.6, y:1.15},
+   {n:'Outside Influences', d:'Other people and circumstances', x:4.8, y:.9},
+   {n:'Advice', d:'The best course of action', x:6.0, y:.45},
+   {n:'Outcome', d:'The likely result', x:7.2, y:0}]},
+ celtic:{name:'Celtic Cross', t:'Celtic Cross', pos:[
+   {n:'Present', d:'The heart of the situation', x:1.45, y:1.62},
+   {n:'Challenge', d:'What crosses you', x:1.45, y:1.62, r:true},
+   {n:'Foundation', d:'The root of the matter', x:1.45, y:2.77},
+   {n:'Recent Past', d:'What is passing away', x:0, y:1.62},
+   {n:'Crown', d:'Your aim, or the best possible outcome', x:1.45, y:.47},
+   {n:'Near Future', d:'What comes next', x:2.9, y:1.62},
+   {n:'Self', d:'Your attitude and position', x:4.4, y:3.24},
+   {n:'Environment', d:'The people and forces around you', x:4.4, y:2.16},
+   {n:'Hopes & Fears', d:'What you wish for, and what you dread', x:4.4, y:1.08},
+   {n:'Outcome', d:'Where this is leading', x:4.4, y:0}]},
+ custom:{name:'Free Draw', t:'Free Draw', custom:true}
+};
+
+/* ---------- State ---------- */
+const state = { spread:'ppf', customN:5, allowRev:true, order:[], reversed:[], drawn:[], revealed:new Set(), busy:false };
+function shuffled(arr){ const a = arr.slice(); for(let i=a.length-1;i>0;i--){ const j=rand(i+1); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function newReversals(){ return IDS.map(() => state.allowRev && rand(2) === 1); }
+
+const $ = id => document.getElementById(id);
+const stage = $('stage'), spreadsEl = $('spreads'), tilesEl = $('tiles'), statusEl = $('status');
+const shuffleBtn = $('shuffleBtn'), randomBtn = $('randomBtn'), revealBtn = $('revealBtn');
+const customWrap = $('customWrap'), customOut = $('customOut'), minusBtn = $('minusBtn'), plusBtn = $('plusBtn');
+const allowRev = $('allowRev'), revNote = $('revNote');
+
+/* ---------- Build cards ---------- */
+const els = DECK.map(c => {
+  const el = document.createElement('div');
+  el.className = 'card';
+  el.dataset.id = c.id;
+  el.innerHTML = `<div class="card-inner">
+    <div class="face back"><svg viewBox="0 0 100 170" preserveAspectRatio="none" aria-hidden="true"><use href="#cardback"/></svg></div>
+    <div class="face front">${frontHTML(c)}</div></div>`;
+  return el;
+});
+const deckLabel = document.createElement('div');
+deckLabel.className = 'deck-label';
+stage.appendChild(deckLabel);
+els.forEach(el => stage.appendChild(el));
+
+/* ---------- Geometry ---------- */
+let G = null;
+function positionsFor(key, width){
+  const s = SPREADS[key];
+  if(!s.custom) return s.pos;
+  const N = state.customN, cols = Math.min(N, width < 600 ? 4 : 6);
+  return Array.from({length:N}, (_, i) => ({ n:'Card ' + (i+1), d: i===0 ? 'Read freely, in the order drawn' : 'Drawn ' + ordinal(i+1), x:(i%cols)*1.2, y:Math.floor(i/cols)*1.12 }));
+}
+const positions = () => positionsFor(state.spread, stage.clientWidth);
+function ordinal(n){ const s=['th','st','nd','rd'], v=n%100; return n+(s[(v-20)%10]||s[v]||s[0]); }
+function bbox(pos){
+  let minX=Infinity, maxX=-Infinity, minY=Infinity, maxY=-Infinity;
+  pos.forEach(p => { const cx=p.x+.5, cy=(p.y+.5)*R, hx=p.r?R/2:.5, hy=p.r?.5:R/2;
+    minX=Math.min(minX,cx-hx); maxX=Math.max(maxX,cx+hx); minY=Math.min(minY,cy-hy); maxY=Math.max(maxY,cy+hy); });
+  return {minX, minY, bw:maxX-minX, bh:maxY-minY};
+}
+function computeGeometry(){
+  const W = stage.clientWidth || 800;
+  const pos = positions(), b = bbox(pos);
+  const padX = W < 560 ? 14 : 28, padTop = 30;
+  const availH = Math.max(280, Math.min(window.innerHeight * 0.62, 640));
+  const cw = Math.min(140, (W - padX*2) / b.bw, availH / b.bh);
+  const ch = cw * R;
+  const ox = (W - b.bw*cw)/2 - b.minX*cw, oy = padTop - b.minY*cw;
+  const slots = pos.map(p => ({cx: ox + (p.x+.5)*cw, cy: oy + (p.y+.5)*R*cw, rot: p.r ? 90 : 0}));
+  const spreadBottom = padTop + b.bh*cw;
+  const fwT = W < 560 ? 44 : W < 1000 ? 56 : 64;
+  const fs = fwT / cw, fw = fwT, fh = fwT * R;
+  const rows = W < 560 ? 3 : W < 1000 ? 2 : 1;
+  const perRow = Math.ceil(TOTAL / rows);
+  const span = W - fw - 36, maxA = 20 * Math.PI / 180;
+  const Rr = (span/2) / Math.sin(maxA), drop = Rr * (1 - Math.cos(maxA)), rowGap = fh * 0.62;
+  const labelY = spreadBottom + 26, fanTop = labelY + 34;
+  const fan = [];
+  for(let k=0;k<TOTAL;k++){
+    const r = Math.floor(k/perRow), j = k%perRow, n = Math.min(perRow, TOTAL - r*perRow);
+    const t = n > 1 ? j/(n-1)*2 - 1 : 0, a = t*maxA;
+    fan.push({cx: W/2 + Rr*Math.sin(a), cy: fanTop + r*rowGap + fh/2 + Rr*(1-Math.cos(a)), rot: a*180/Math.PI});
+  }
+  const fanH = (rows-1)*rowGap + fh + drop;
+  G = {W, cw, ch, slots, fan, fs, fw, fh, H: Math.ceil(fanTop + fanH + 28), labelY, deck:{cx: W/2, cy: fanTop + fanH/2}, pos};
+}
+function setT(el, cx, cy, rot, scale){
+  el.style.transform = `translate(${f(cx - G.cw/2)}px, ${f(cy - G.ch/2)}px) rotate(${f(rot)}deg) translateY(var(--lift, 0px)) scale(${f(scale)})`;
+}
+function place(id){
+  const el = els[id], rev = state.reversed[id] ? 180 : 0;
+  const di = state.drawn.indexOf(id);
+  if(di >= 0 && G.slots[di]){
+    const s = G.slots[di];
+    setT(el, s.cx, s.cy, s.rot + rev, 1);
+    el.style.zIndex = 300 + di;
+    el.classList.remove('in-fan'); el.classList.add('drawn');
+    el.tabIndex = 0; el.setAttribute('role','button');
+    el.setAttribute('aria-label', `Position ${di+1}, ${G.pos[di].n}: ` + (state.revealed.has(id) ? DECK[id].name + (state.reversed[id] ? ', reversed' : ', upright') : 'face down, press to turn over'));
+  } else {
+    const k = state.order.indexOf(id), p = G.fan[k];
+    setT(el, p.cx, p.cy, p.rot + rev, G.fs);
+    el.style.zIndex = 10 + k;
+    el.classList.add('in-fan'); el.classList.remove('drawn');
+    el.tabIndex = -1; el.removeAttribute('role'); el.removeAttribute('aria-label');
+  }
+}
+const placeAll = () => IDS.forEach(place);
+function renderSlots(){
+  stage.querySelectorAll('.slot').forEach(s => s.remove());
+  G.slots.forEach((s, i) => {
+    const d = document.createElement('div');
+    d.className = 'slot' + (s.rot ? ' rot' : '');
+    d.innerHTML = `<span class="slot-num">${i+1}</span>${G.cw >= 64 ? `<span class="slot-name">${G.pos[i].n}</span>` : ''}`;
+    d.style.transform = `translate(${f(s.cx - G.cw/2)}px, ${f(s.cy - G.ch/2)}px) rotate(${s.rot}deg)`;
+    stage.insertBefore(d, deckLabel);
+  });
+}
+function relayout(doPlace = true){
+  computeGeometry();
+  stage.style.setProperty('--cw', G.cw + 'px');
+  stage.style.height = G.H + 'px';
+  deckLabel.style.top = G.labelY + 'px';
+  renderSlots(); updateDeckLabel();
+  if(doPlace && !state.busy) placeAll();
+}
+const updateDeckLabel = () => { deckLabel.textContent = `The deck · ${TOTAL - state.drawn.length} of ${TOTAL}`; };
+
+/* ---------- Spread tiles ---------- */
+function miniDiagram(key){
+  const pos = positionsFor(key, 900), b = bbox(pos);
+  const s = Math.min(58/b.bw, 38/b.bh), ox = (62 - b.bw*s)/2 - b.minX*s, oy = (40 - b.bh*s)/2 - b.minY*s;
+  const w = f(s*.84), h = f(s*R*.84);
+  return `<svg viewBox="0 0 62 40" aria-hidden="true">${pos.map(p => {
+    const cx = ox + (p.x+.5)*s, cy = oy + (p.y+.5)*R*s;
+    return `<rect x="${f(cx-w/2)}" y="${f(cy-h/2)}" width="${w}" height="${h}" rx="1"${p.r?` transform="rotate(90 ${f(cx)} ${f(cy)})"`:''}/>`;
+  }).join('')}</svg>`;
+}
+function buildTiles(){
+  tilesEl.innerHTML = Object.entries(SPREADS).map(([k, s]) => `<label class="tile" title="${s.name}">
+    <input type="radio" name="spread" id="sp-${k}" value="${k}"${k===state.spread?' checked':''}>
+    <span class="tcount">${s.custom ? state.customN : s.pos.length}</span>
+    <span class="tdiag" data-key="${k}">${miniDiagram(k)}</span>
+    <span class="tname">${s.t}</span></label>`).join('');
+}
+function refreshCustomTile(){
+  const d = tilesEl.querySelector('.tdiag[data-key="custom"]');
+  if(d){ d.innerHTML = miniDiagram('custom'); d.parentElement.querySelector('.tcount').textContent = state.customN; }
+}
+
+/* ---------- UI state ---------- */
+function updateUI(){
+  const N = G.pos.length, drawn = state.drawn.length;
+  const turned = state.drawn.filter(id => state.revealed.has(id)).length;
+  shuffleBtn.disabled = state.busy;
+  randomBtn.disabled = state.busy || drawn >= N;
+  revealBtn.disabled = state.busy || turned === drawn || drawn === 0;
+  spreadsEl.disabled = state.busy;
+  minusBtn.disabled = state.busy || state.customN <= 1;
+  plusBtn.disabled = state.busy || state.customN >= 12;
+  stage.classList.toggle('full', drawn >= N);
+  stage.classList.toggle('busy', state.busy);
+  updateDeckLabel();
+  let msg;
+  if(state.busy) msg = 'Shuffling the deck…';
+  else if(drawn === 0) msg = `Pull <b>${N}</b> card${N>1?'s':''} from the fanned deck, or draw at random.`;
+  else if(drawn < N) msg = `<b>${N-drawn}</b> more to pull.`;
+  else if(turned < drawn) msg = 'Turn each card over to read it.';
+  else msg = 'The reading is laid out. Shuffle &amp; Spread to begin again.';
+  statusEl.innerHTML = msg;
+}
+function renderReading(){
+  const s = SPREADS[state.spread];
+  $('readingTitle').textContent = s.custom ? `Free Draw of ${state.customN}` : s.name;
+  const turned = state.drawn.filter(id => state.revealed.has(id)).length;
+  $('readingMeta').textContent = `${turned} of ${G.pos.length} revealed`;
+  $('ledger').innerHTML = G.pos.map((p, i) => {
+    const id = state.drawn[i];
+    let inner;
+    if(id === undefined) inner = `<div class="waiting">Awaiting a card</div>`;
+    else if(!state.revealed.has(id)) inner = `<div class="waiting">Face down</div><button class="linkish" type="button" data-turn="${id}">Turn it over</button>`;
+    else {
+      const c = DECK[id], rev = state.reversed[id];
+      inner = `<div class="card-line"><span class="card-title">${c.name}</span><span class="pill${rev?' rev':''}">${rev?'Reversed':'Upright'}</span></div>
+        <div class="card-meta">${metaLine(c)}</div>
+        <div class="card-keys">${dot(rev ? c.rev : c.up)}</div>
+        <div class="card-look"><b>Look for</b> ${c.look}</div>
+        <button class="linkish" type="button" data-open="${id}">View card</button>`;
+    }
+    return `<li class="entry"><span class="entry-num">${i+1}</span><div class="entry-body">
+      <span class="pos-name">${p.n}</span><span class="pos-desc">${p.d}</span>${inner}</div></li>`;
+  }).join('');
+}
+
+/* ---------- Actions ---------- */
+function pull(id){
+  if(state.drawn.length >= G.pos.length || state.drawn.includes(id)) return;
+  state.drawn.push(id);
+  els[id].style.transitionDelay = '0ms';
+  place(id); renderReading(); updateUI();
+}
+function reveal(id){
+  if(state.revealed.has(id)) return;
+  state.revealed.add(id);
+  els[id].classList.add('revealed');
+  place(id); renderReading(); updateUI();
+}
+async function drawRandom(){
+  if(state.busy) return;
+  state.busy = true; updateUI();
+  while(state.drawn.length < G.pos.length){
+    const pool = state.order.filter(id => !state.drawn.includes(id));
+    pull(pool[rand(pool.length)]);
+    await sleep(260);
+  }
+  state.busy = false; updateUI();
+}
+async function revealAll(){
+  if(state.busy) return;
+  state.busy = true; updateUI();
+  for(const id of state.drawn.slice()) if(!state.revealed.has(id)){ reveal(id); await sleep(240); }
+  state.busy = false; updateUI();
+}
+const stackPos = k => ({cx: G.deck.cx + jitter(1.2), cy: G.deck.cy - k*0.14 + jitter(0.6)});
+function riffleMerge(cur, half){
+  const A = cur.slice(0, half), B = cur.slice(half), out = [];
+  while(A.length || B.length){
+    const from = !A.length ? B : !B.length ? A : (rand(2) ? A : B);
+    let n = 1 + rand(3);
+    while(n-- && from.length) out.push(from.shift());
+  }
+  return out;
+}
+async function shuffleAndSpread(initial = false){
+  if(state.busy) return;
+  state.busy = true; updateUI();
+  if(!initial){
+    if(state.revealed.size){
+      state.revealed.forEach(id => els[id].classList.remove('revealed'));
+      state.revealed.clear();
+      await sleep(500);
+    }
+    state.drawn = [];
+    renderReading(); updateUI();
+    state.order.forEach((id, k) => {
+      const el = els[id], p = stackPos(k);
+      el.style.transitionDelay = (k*4*M) + 'ms';
+      el.style.zIndex = 10 + k;
+      el.classList.remove('in-fan','drawn');
+      setT(el, p.cx, p.cy, (state.reversed[id]?180:0) + jitter(2), G.fs);
+    });
+    await sleep(650 + TOTAL*4);
+  }
+  const finalOrder = shuffled(IDS), finalRev = newReversals();
+  let cur = state.order.slice();
+  for(let pass = 0; pass < 3; pass++){
+    const last = pass === 2, half = Math.floor(TOTAL/2) + rand(9) - 4;
+    cur.forEach((id, k) => {
+      const el = els[id], left = k < half, kk = left ? k : k - half;
+      el.style.transitionDelay = '0ms';
+      setT(el, G.deck.cx + (left ? -1 : 1) * G.fw * 0.8, G.deck.cy - kk*0.2, (left ? -8 : 8) + (state.reversed[id]?180:0), G.fs);
+    });
+    await sleep(380);
+    const next = last ? finalOrder : riffleMerge(cur, half);
+    if(last) state.reversed = finalRev;
+    next.forEach((id, k) => {
+      const el = els[id], p = stackPos(k);
+      el.style.transitionDelay = (k*5*M) + 'ms';
+      el.style.zIndex = 10 + k;
+      setT(el, p.cx, p.cy, (state.reversed[id]?180:0) + jitter(1.5), G.fs);
+    });
+    cur = next;
+    await sleep(420 + TOTAL*5);
+  }
+  state.order = finalOrder;
+  revNote.hidden = true;
+  state.order.forEach((id, k) => { els[id].style.transitionDelay = (k*9*M) + 'ms'; place(id); });
+  await sleep(700 + TOTAL*9);
+  els.forEach(el => el.style.transitionDelay = '0ms');
+  state.busy = false;
+  renderReading(); updateUI();
+}
+function onSpreadChange(){
+  customWrap.hidden = state.spread !== 'custom';
+  state.revealed.forEach(id => els[id].classList.remove('revealed'));
+  state.revealed.clear(); state.drawn = [];
+  relayout(); renderReading(); updateUI();
+}
+function setCustom(v){
+  v = Math.max(1, Math.min(12, v));
+  if(v === state.customN) return;
+  state.customN = v; customOut.textContent = v;
+  refreshCustomTile(); onSpreadChange();
+}
+
+/* ---------- Modal ---------- */
+const modal = $('modal');
+let lastFocus = null;
+function openModal(id){
+  const c = DECK[id], rev = state.reversed[id], i = state.drawn.indexOf(id);
+  $('mPos').textContent = i >= 0 ? `Position ${i+1} · ${G.pos[i].n}` : '';
+  $('mName').textContent = c.name + (rev ? ', reversed' : '');
+  $('mMeta').innerHTML = metaLine(c);
+  $('mLook').innerHTML = `<b>Look for</b> ${c.look}`;
+  $('mUp').textContent = dot(c.up); $('mRev').textContent = dot(c.rev);
+  $('mUpBox').classList.toggle('active', !rev);
+  $('mRevBox').classList.toggle('active', rev);
+  const w = window.innerWidth < 640 ? 180 : 230;
+  $('mArt').innerHTML = `<div class="card${rev?' rev':''}" style="--cw:${w}px"><div class="face front">${frontHTML(c)}</div></div>`;
+  lastFocus = document.activeElement;
+  modal.hidden = false;
+  $('modalClose').focus();
+}
+function closeModal(){ modal.hidden = true; if(lastFocus && lastFocus.focus) lastFocus.focus(); }
+$('modalClose').addEventListener('click', closeModal);
+modal.addEventListener('click', e => { if(e.target === modal) closeModal(); });
+document.addEventListener('keydown', e => { if(e.key === 'Escape' && !modal.hidden) closeModal(); });
+
+/* ---------- Events ---------- */
+buildTiles();
+tilesEl.addEventListener('change', e => {
+  if(e.target.name === 'spread' && !state.busy){ state.spread = e.target.value; onSpreadChange(); }
+});
+minusBtn.addEventListener('click', () => setCustom(state.customN - 1));
+plusBtn.addEventListener('click', () => setCustom(state.customN + 1));
+allowRev.addEventListener('change', () => { state.allowRev = allowRev.checked; revNote.hidden = false; });
+shuffleBtn.addEventListener('click', () => shuffleAndSpread());
+randomBtn.addEventListener('click', drawRandom);
+revealBtn.addEventListener('click', revealAll);
+function activateCard(el){
+  const id = +el.dataset.id;
+  if(el.classList.contains('drawn')){ if(!state.busy) state.revealed.has(id) ? openModal(id) : reveal(id); }
+  else if(el.classList.contains('in-fan') && !state.busy) pull(id);
+}
+stage.addEventListener('click', e => { const el = e.target.closest('.card'); if(el) activateCard(el); });
+stage.addEventListener('keydown', e => { const el = e.target.closest('.card'); if(el && (e.key === 'Enter' || e.key === ' ')){ e.preventDefault(); activateCard(el); } });
+$('ledger').addEventListener('click', e => {
+  const t = e.target.closest('[data-turn]'), o = e.target.closest('[data-open]');
+  if(t && !state.busy) reveal(+t.dataset.turn);
+  if(o) openModal(+o.dataset.open);
+});
+let rz;
+window.addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => relayout(), 120); });
+
+/* ---------- First deal ---------- */
+state.order = shuffled(IDS);
+state.reversed = newReversals();
+relayout(false);
+stage.classList.add('instant');
+state.order.forEach((id, k) => { const p = stackPos(k); els[id].style.zIndex = 10 + k; setT(els[id], p.cx, p.cy, state.reversed[id]?180:0, G.fs); });
+void stage.offsetHeight;
+stage.classList.remove('instant');
+renderReading(); updateUI();
+setTimeout(() => shuffleAndSpread(true), 300);
+})();
+</script>
+
+</body></html>
