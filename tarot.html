@@ -169,8 +169,8 @@ footer{text-align:center;color:var(--gold-dim);font-size:.9rem;font-style:italic
 @media (max-width:640px){
   body{font-size:17px}
   .btn{padding:8px 13px;font-size:.9rem}
-  .tiles{justify-content:flex-start}
-  .tile{width:80px}
+  .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:10px 6px;width:100%;max-width:420px;margin:0 auto;overflow:visible;justify-content:center}
+  .tile{width:auto;min-width:0;padding:8px 2px 7px}
   .modal-card{padding:22px 18px}
   .modal-art{width:180px;height:306px}
 }
