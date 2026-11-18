@@ -1,7 +1,6 @@
 <!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <meta charset="utf-8">
 <title>Petit Lenormand</title>
-<meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=IM+Fell+English:ital@0;1&family=IM+Fell+English+SC&display=swap">
@@ -42,7 +41,7 @@ body{color:var(--bone);font-family:var(--f-body);font-size:18px;line-height:1.5;
 
 .console{display:flex;flex-direction:column;align-items:center;gap:10px;border-top:1px solid rgba(200,168,91,.25);border-bottom:1px solid rgba(200,168,91,.25);padding-block:10px}
 fieldset{border:0;margin:0;padding:0;min-width:0;max-width:100%}
-.tiles{display:flex;gap:2px;overflow-x:auto;max-width:100%;justify-content:safe center;scrollbar-width:thin;scrollbar-color:var(--gold-dim) transparent;padding:2px}
+.tiles{display:flex;flex-wrap:wrap;gap:2px;overflow-x:auto;max-width:100%;justify-content:safe center;scrollbar-width:thin;scrollbar-color:var(--gold-dim) transparent;padding:2px}
 .tile{position:relative;flex:none;width:90px;display:flex;flex-direction:column;align-items:center;gap:5px;padding:8px 4px 7px;border-radius:4px;border:1px solid transparent;cursor:pointer;color:var(--muted);transition:color .2s,background .2s,border-color .2s;user-select:none}
 .tile input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
 .tile svg{width:62px;height:40px;display:block;overflow:visible}
