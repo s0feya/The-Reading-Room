@@ -1,0 +1,406 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<meta charset="utf-8">
+<title>The Reading Room</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=IM+Fell+English:ital@0;1&family=IM+Fell+English+SC&family=Pinyon+Script&display=swap">
+<style>
+/* Layout: a night garden. Two dark wrought-iron gates on slim columns, lit from behind, each above a slate plaque; a comparison table below. */
+:root{
+  color-scheme: dark;
+  --night:#08090b; --iron:#1c1a21; --sheen:#7d7789; --gilt:#b38a42; --gilt-hi:#e2c27e;
+  --gold:#c9a557; --gold-dim:#7d6739; --bone:#e8dbbb; --muted:#a59c86;
+  --slate:#1d1c22; --slate-2:#121116;
+  --f-display:"IM Fell English","Iowan Old Style",Georgia,serif;
+  --f-sc:"IM Fell English SC","IM Fell English",Georgia,serif;
+  --f-body:"Cormorant Garamond","Iowan Old Style",Georgia,serif;
+}
+*{box-sizing:border-box}
+html,body{background:var(--night)}
+body{margin:0;color:var(--bone);font-family:var(--f-body);font-size:18px;line-height:1.5;min-height:100%;
+  background:radial-gradient(ellipse 70% 40% at 50% 0%, #161a1f 0%, transparent 70%), var(--night)}
+.pad{padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+
+header{text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px;padding-block:44px 6px}
+.eyebrow{font-family:var(--f-sc);letter-spacing:.18em;font-size:.82rem;color:var(--gold);margin:0}
+h1{font-family:var(--f-display);font-weight:400;font-size:clamp(2.8rem,8vw,5rem);line-height:1;margin:0;color:var(--bone);text-wrap:balance;text-shadow:0 0 24px rgba(226,194,126,.25)}
+h1 i{color:var(--gold)}
+.scrollrule{width:min(300px,76%);height:auto;display:block;color:var(--gilt)}
+.lede{margin:0;color:var(--muted);font-style:italic;max-width:52ch;text-wrap:balance}
+
+.garden{position:relative;padding-block:24px 40px;background-color:var(--night);background-repeat:no-repeat;background-size:100% 100%}
+.doors{max-width:1000px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:36px 48px;justify-items:center}
+.door{display:flex;flex-direction:column;align-items:center;width:100%;max-width:440px;text-decoration:none;color:inherit;-webkit-tap-highlight-color:transparent}
+.door:focus-visible{outline:none}
+.door:focus-visible .name{outline:1px solid var(--gilt-hi);outline-offset:6px}
+.name{margin:10px 0 0;font-family:"Pinyon Script","Snell Roundhand","Apple Chancery",cursive;font-weight:400;font-size:clamp(2.6rem,6vw,3.4rem);line-height:1.1;color:var(--gilt-hi);
+  text-shadow:0 0 12px color-mix(in srgb, var(--glow) 55%, transparent), 0 0 28px color-mix(in srgb, var(--glow) 30%, transparent);transition:text-shadow .6s,color .6s}
+.door:hover .name{color:#fff0c9;text-shadow:0 0 14px var(--glow), 0 0 36px color-mix(in srgb, var(--glow) 55%, transparent)}
+.door.tarot{--glow:#e9b866;--glow-2:#9b6bd6;--deep:#1a0b18;--mid:#4a2140;--mote:#ffd99a}
+.door.leno{--glow:#bfe7a0;--glow-2:#4fae8a;--deep:#06120d;--mid:#1d4a38;--mote:#d9ffc0}
+
+.gateway{position:relative;width:100%;aspect-ratio:460/620;perspective:1100px}
+.gateway > *{position:absolute}
+.halo{inset:-6% -14% 2%;pointer-events:none;
+  background:radial-gradient(ellipse 46% 50% at 50% 52%, color-mix(in srgb, var(--glow) 55%, transparent) 0%, color-mix(in srgb, var(--glow-2) 22%, transparent) 45%, transparent 72%);
+  filter:blur(8px);opacity:.65;animation:breathe 7s ease-in-out infinite}
+@keyframes breathe{0%,100%{opacity:.5;transform:scale(.97)}50%{opacity:.85;transform:scale(1.03)}}
+.beyond{left:15.2%;width:69.6%;top:25%;bottom:3.2%;overflow:hidden;border-radius:50% 50% 0 0 / 12% 12% 0 0;
+  background:
+    radial-gradient(ellipse 55% 42% at 50% 46%, color-mix(in srgb, var(--glow) 70%, #fff 0%) 0%, color-mix(in srgb, var(--glow) 30%, var(--mid)) 30%, var(--mid) 58%, var(--deep) 100%);
+  box-shadow:inset 0 0 50px rgba(0,0,0,.65)}
+.beyond::after{content:"";position:absolute;left:0;right:0;bottom:0;height:20%;background:linear-gradient(to bottom, transparent, rgba(8,9,11,.85))}
+.fan{position:absolute;left:50%;top:50%;width:62%;height:34%;transform:translate(-50%,-50%)}
+.fan svg{position:absolute;left:50%;bottom:0;width:36%;transform-origin:50% 125%;filter:drop-shadow(0 6px 12px rgba(0,0,0,.6));transition:transform .9s cubic-bezier(.3,.7,.2,1)}
+.fan svg:nth-child(1){transform:translateX(-50%) rotate(-16deg)}
+.fan svg:nth-child(2){transform:translateX(-50%)}
+.fan svg:nth-child(3){transform:translateX(-50%) rotate(16deg)}
+.door:hover .fan svg:nth-child(1),.door:focus-visible .fan svg:nth-child(1){transform:translateX(-50%) rotate(-26deg)}
+.door:hover .fan svg:nth-child(3),.door:focus-visible .fan svg:nth-child(3){transform:translateX(-50%) rotate(26deg)}
+.glowtext{position:absolute;left:0;right:0;bottom:22%;text-align:center;font-family:var(--f-sc);letter-spacing:.22em;font-size:.72rem;color:#fff6e0;text-shadow:0 0 10px var(--glow);opacity:0;transition:opacity .6s .3s}
+.door:hover .glowtext,.door:focus-visible .glowtext{opacity:.95}
+
+.iron svg{display:block;width:100%;height:100%;overflow:visible}
+.iron{filter:drop-shadow(0 0 1.5px color-mix(in srgb, var(--glow) 70%, transparent)) drop-shadow(0 0 9px color-mix(in srgb, var(--glow) 35%, transparent))}
+.leaf{top:34.5%;height:62.3%;width:34.8%;transition:transform 1.3s cubic-bezier(.3,.7,.2,1);will-change:transform}
+.leaf.l{left:15.2%;transform-origin:0 50%;transform:rotateY(5deg)}
+.leaf.r{left:50%;transform-origin:100% 50%;transform:rotateY(-5deg)}
+.leaf.r svg{transform:scaleX(-1)}
+.door:hover .leaf.l,.door:focus-visible .leaf.l{transform:rotateY(76deg)}
+.door:hover .leaf.r,.door:focus-visible .leaf.r{transform:rotateY(-76deg)}
+.frame{inset:0;pointer-events:none}
+
+.motes{inset:0;pointer-events:none;overflow:visible}
+.mote{position:absolute;width:3px;height:3px;border-radius:50%;background:var(--mote);box-shadow:0 0 6px 2px color-mix(in srgb, var(--mote) 60%, transparent);opacity:0;animation:rise var(--d,8s) linear infinite;animation-delay:var(--delay,0s)}
+@keyframes rise{0%{opacity:0;transform:translate(0,0) scale(.6)}15%{opacity:.95}70%{opacity:.6}100%{opacity:0;transform:translate(var(--dx,10px),-160px) scale(1)}}
+.mist{left:-12%;right:-12%;bottom:-3%;height:18%;pointer-events:none;
+  background:radial-gradient(ellipse 40% 60% at 30% 70%, rgba(200,210,220,.13), transparent 70%), radial-gradient(ellipse 45% 55% at 72% 75%, rgba(200,210,220,.11), transparent 70%);
+  animation:drift 14s ease-in-out infinite alternate}
+@keyframes drift{from{transform:translateX(-4%)}to{transform:translateX(4%)}}
+
+.plaque{position:relative;margin-top:16px;width:90%;padding:18px 20px 20px;text-align:center;border-radius:3px;
+  background:linear-gradient(170deg, var(--slate) 0%, var(--slate-2) 100%);
+  border:1px solid color-mix(in srgb, var(--glow) 35%, #000);
+  box-shadow:inset 0 0 0 5px var(--slate-2), inset 0 0 0 6px color-mix(in srgb, var(--glow) 22%, transparent), 0 0 30px color-mix(in srgb, var(--glow) 12%, transparent), 0 12px 26px rgba(0,0,0,.6);
+  display:flex;flex-direction:column;align-items:center;gap:8px}
+.plaque .kind{font-family:var(--f-sc);letter-spacing:.22em;font-size:.78rem;color:var(--gilt-hi)}
+.plaque h2{font-family:var(--f-display);font-weight:400;font-size:2.1rem;line-height:1.05;margin:0;color:var(--bone);text-shadow:0 0 14px color-mix(in srgb, var(--glow) 40%, transparent)}
+.plaque p{margin:0;max-width:34ch;font-size:1.04rem;line-height:1.4;color:var(--muted)}
+.facts{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 16px;font-family:var(--f-sc);letter-spacing:.08em;font-size:.82rem;color:var(--muted)}
+.facts b{font-family:var(--f-display);font-weight:400;font-size:1.15rem;color:var(--gilt-hi);font-variant-numeric:tabular-nums}
+.enter{margin-top:4px;font-family:var(--f-sc);letter-spacing:.14em;font-size:.92rem;color:var(--gilt-hi);border:1px solid var(--gilt);padding:8px 20px;border-radius:2px;transition:background .3s,color .3s,box-shadow .3s}
+.door:hover .enter{background:var(--gilt);color:var(--slate-2);box-shadow:0 0 18px color-mix(in srgb, var(--glow) 45%, transparent)}
+
+.tablet{max-width:760px;margin:6px auto 0;display:flex;flex-direction:column;align-items:center;gap:14px;padding-block:10px 50px}
+.compare{width:100%;display:grid;grid-template-columns:auto 1fr 1fr;border-top:1px solid rgba(201,165,87,.35);font-size:1rem}
+.compare div{padding:10px 12px;border-bottom:1px solid rgba(201,165,87,.14);min-width:0}
+.compare .h{font-family:var(--f-sc);letter-spacing:.12em;font-size:.8rem;color:var(--gold)}
+.compare .k{font-family:var(--f-sc);letter-spacing:.08em;font-size:.85rem;color:var(--muted)}
+footer{color:var(--gold-dim);font-style:italic;font-size:.9rem;text-align:center}
+@media (max-width:560px){ .compare{font-size:.92rem} .compare div{padding:8px 6px} .plaque h2{font-size:1.8rem} }
+@media (prefers-reduced-motion: reduce){ .leaf,.fan svg{transition:none} .halo,.mist,.mote{animation:none} .mote{opacity:.6} .door:hover .leaf.l,.door:hover .leaf.r{transform:none} }
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <radialGradient id="gNavy" cx="50%" cy="50%" r="60%"><stop offset="0" stop-color="#1d2547"/><stop offset="1" stop-color="#0d1229"/></radialGradient>
+    <radialGradient id="gClaret" cx="50%" cy="50%" r="60%"><stop offset="0" stop-color="#6b1a26"/><stop offset="1" stop-color="#350a12"/></radialGradient>
+    <linearGradient id="shaftG" x1="0" x2="1"><stop offset="0" stop-color="#3a3642"/><stop offset=".35" stop-color="#24212b"/><stop offset="1" stop-color="#121116"/></linearGradient>
+    <pattern id="lat" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0H9M0 0V9" stroke="#c9a557" stroke-opacity=".32" stroke-width=".6"/></pattern>
+    <symbol id="tback" viewBox="0 0 100 170">
+      <rect x="1" y="1" width="98" height="168" rx="7" fill="url(#gNavy)" stroke="#000" stroke-opacity=".4"/>
+      <g fill="none" stroke="#c9a557" stroke-width=".9">
+        <rect x="5" y="5" width="90" height="160" rx="5"/><rect x="8.5" y="8.5" width="83" height="153" rx="3" stroke-width=".45"/>
+        <circle cx="50" cy="85" r="26"/><circle cx="50" cy="85" r="23.5" stroke-width=".4"/>
+        <polygon points="50,66 52.6,78.7 63.4,71.6 56.3,82.4 69,85 56.3,87.6 63.4,98.4 52.6,91.3 50,104 47.4,91.3 36.6,98.4 43.7,87.6 31,85 43.7,82.4 36.6,71.6 47.4,78.7" fill="#c9a557" stroke="none"/>
+        <path d="M50 31a10 10 0 1 0 0 20a12 12 0 0 1 0-20z" fill="#c9a557" stroke="none"/>
+        <path d="M50 139a10 10 0 1 0 0-20a12 12 0 0 1 0 20z" fill="#c9a557" stroke="none"/>
+      </g>
+    </symbol>
+    <symbol id="lback" viewBox="0 0 100 145">
+      <rect x="1" y="1" width="98" height="143" rx="7" fill="url(#gClaret)" stroke="#000" stroke-opacity=".4"/>
+      <g fill="none" stroke="#c9a557" stroke-width=".9">
+        <rect x="5" y="5" width="90" height="135" rx="5"/>
+        <rect x="9" y="9" width="82" height="127" rx="3" fill="url(#lat)" stroke-width=".45"/>
+        <ellipse cx="50" cy="72.5" rx="25" ry="34" fill="#4a1119"/>
+        <polygon points="50,52 51.7,59.9 58.5,55.5 54.1,62.3 62,64 54.1,65.7 58.5,72.5 51.7,68.1 50,76 48.3,68.1 41.5,72.5 45.9,65.7 38,64 45.9,62.3 41.5,55.5 48.3,59.9" fill="#c9a557" stroke="none"/>
+        <path d="M40 84 a10 10 0 0 0 20 0 a12 10 0 0 1 -20 0z" fill="#c9a557" stroke="none"/>
+      </g>
+    </symbol>
+  </defs>
+</svg>
+
+<header class="pad">
+  <p class="eyebrow">Two decks &middot; Two traditions</p>
+  <h1>The Reading <i>Room</i></h1>
+  <svg class="scrollrule" id="rule" viewBox="0 0 300 40" aria-hidden="true"></svg>
+  <p class="lede">Two gates glow at the end of the garden. Step through the one that calls to you.</p>
+</header>
+
+<section class="garden pad" id="garden">
+  <nav class="doors" aria-label="Decks">
+    <a class="door tarot" href="https://claude.ai/artifact/TjHGaLR1nLUtmSHCzqxDok" target="_blank" rel="noopener" data-emblem="star">
+      <div class="gateway">
+        <div class="halo"></div>
+        <div class="beyond"><div class="fan" aria-hidden="true">
+          <svg viewBox="0 0 100 170"><use href="#tback"/></svg><svg viewBox="0 0 100 170"><use href="#tback"/></svg><svg viewBox="0 0 100 170"><use href="#tback"/></svg>
+        </div><div class="glowtext">Seventy-eight cards</div></div>
+        <div class="leaf l iron"></div><div class="leaf r iron"></div>
+        <div class="frame iron"></div>
+        <div class="motes"></div>
+        <div class="mist"></div>
+      </div>
+      <h2 class="name">Tarot</h2>
+    </a>
+    <a class="door leno" href="https://claude.ai/artifact/Mm1Dtfw65EYtPj1M6MRHzE" target="_blank" rel="noopener" data-emblem="clover">
+      <div class="gateway">
+        <div class="halo"></div>
+        <div class="beyond"><div class="fan" aria-hidden="true">
+          <svg viewBox="0 0 100 145"><use href="#lback"/></svg><svg viewBox="0 0 100 145"><use href="#lback"/></svg><svg viewBox="0 0 100 145"><use href="#lback"/></svg>
+        </div><div class="glowtext">Thirty-six cards</div></div>
+        <div class="leaf l iron"></div><div class="leaf r iron"></div>
+        <div class="frame iron"></div>
+        <div class="motes"></div>
+        <div class="mist"></div>
+      </div>
+      <h2 class="name">Lenormand</h2>
+    </a>
+  </nav>
+</section>
+
+<section class="tablet pad">
+  <div class="compare" role="table" aria-label="Tarot and Lenormand compared">
+    <div class="h" role="columnheader"></div><div class="h" role="columnheader">Tarot</div><div class="h" role="columnheader">Lenormand</div>
+    <div class="k" role="rowheader">Speaks in</div><div role="cell">archetypes and inner states</div><div role="cell">plain, everyday events</div>
+    <div class="k" role="rowheader">Each card</div><div role="cell">read mostly on its own</div><div role="cell">read with its neighbours</div>
+    <div class="k" role="rowheader">Reversals</div><div role="cell">yes, set at the shuffle</div><div role="cell">no, always upright</div>
+    <div class="k" role="rowheader">Best for</div><div role="cell">why, and what to learn</div><div role="cell">what, when, and who</div>
+  </div>
+  <footer>Readings are for reflection and entertainment.</footer>
+</section>
+
+<script>
+(function(){
+"use strict";
+const f = n => +(+n).toFixed(2);
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- Wrought-iron kit ---------- */
+let BALLS = [];
+function scroll(pre, cx, cy, r0, turns, a0, dir, shrink=.86){
+  const n = Math.ceil(turns*30); let d = pre ? pre + ' ' : 'M';
+  for(let i=0;i<=n;i++){ const t=i/n, a=a0+dir*t*turns*2*Math.PI, r=r0*(1-shrink*t);
+    d += (i===0 ? '' : ' L') + f(cx+r*Math.cos(a)) + ' ' + f(cy+r*Math.sin(a)); }
+  const a=a0+dir*turns*2*Math.PI, r=r0*(1-shrink); BALLS.push([cx+r*Math.cos(a), cy+r*Math.sin(a)]);
+  return d;
+}
+const acan = (x, y, rot, L) => `<path transform="translate(${f(x)} ${f(y)}) rotate(${f(rot)})" d="M0 0 C${f(.3*L)} ${f(-.5*L)} ${f(.7*L)} ${f(-.46*L)} ${L} ${f(-.08*L)} C${f(.86*L)} ${f(.02*L)} ${f(.9*L)} ${f(.16*L)} ${f(.7*L)} ${f(.12*L)} C${f(.74*L)} ${f(.26*L)} ${f(.56*L)} ${f(.3*L)} ${f(.46*L)} ${f(.2*L)} C${f(.36*L)} ${f(.34*L)} ${f(.16*L)} ${f(.26*L)} 0 0Z"/>`;
+const bez = (p, t) => { const u=1-t; return [u*u*u*p[0][0]+3*u*u*t*p[1][0]+3*u*t*t*p[2][0]+t*t*t*p[3][0], u*u*u*p[0][1]+3*u*u*t*p[1][1]+3*u*t*t*p[2][1]+t*t*t*p[3][1]]; };
+const bezD = (p, t) => { const u=1-t; return [3*u*u*(p[1][0]-p[0][0])+6*u*t*(p[2][0]-p[1][0])+3*t*t*(p[3][0]-p[2][0]), 3*u*u*(p[1][1]-p[0][1])+6*u*t*(p[2][1]-p[1][1])+3*t*t*(p[3][1]-p[2][1])]; };
+const cubicStr = p => `M${p[0][0]} ${p[0][1]} C${p[1][0]} ${p[1][1]} ${p[2][0]} ${p[2][1]} ${p[3][0]} ${p[3][1]}`;
+function rose(x, y, r){
+  let p = '';
+  for(let i=0;i<6;i++){ const a=i*Math.PI/3, px=x+Math.cos(a)*r*.52, py=y+Math.sin(a)*r*.52;
+    p += `<ellipse cx="${f(px)}" cy="${f(py)}" rx="${f(r*.52)}" ry="${f(r*.36)}" transform="rotate(${i*60} ${f(px)} ${f(py)})"/>`; }
+  for(let i=0;i<5;i++){ const a=i*Math.PI*2/5+.3, px=x+Math.cos(a)*r*.26, py=y+Math.sin(a)*r*.26;
+    p += `<ellipse cx="${f(px)}" cy="${f(py)}" rx="${f(r*.28)}" ry="${f(r*.2)}" transform="rotate(${f(a*180/Math.PI)} ${f(px)} ${f(py)})"/>`; }
+  return { iron: p, gilt: `<circle cx="${f(x)}" cy="${f(y)}" r="${f(r*.15)}"/>` };
+}
+const sleaf = (x, y, rot, L) => `<path transform="translate(${f(x)} ${f(y)}) rotate(${f(rot)})" d="M0 0 C${f(.2*L)} ${f(-.32*L)} ${f(.62*L)} ${f(-.36*L)} ${L} ${f(-.12*L)} C${f(.92*L)} ${f(-.02*L)} ${f(.86*L)} ${f(.06*L)} ${f(.76*L)} ${f(.03*L)} C${f(.6*L)} ${f(.16*L)} ${f(.28*L)} ${f(.15*L)} 0 0Z"/>`;
+const bud = (x, y, rot, s=1) => `<path transform="translate(${f(x)} ${f(y)}) rotate(${f(rot)}) scale(${s})" d="M0 0 C-5 -3 -6 -10 -3 -15 L-1 -11 L0 -16 L1 -11 L3 -15 C6 -10 5 -3 0 0Z"/>`;
+function vineLeaves(p, n, size, phase=0){
+  let s = '';
+  for(let i=0;i<n;i++){ const t=(i+.5)/n, pt=bez(p,t), d=bezD(p,t), ang=Math.atan2(d[1],d[0])*180/Math.PI;
+    s += acan(pt[0], pt[1], ang + ((i+phase)%2 ? 58 : -58), size); }
+  return s;
+}
+function takeBalls(r=2.4){ const s = BALLS.map(([x,y]) => `<circle cx="${f(x)}" cy="${f(y)}" r="${r}"/>`).join(''); BALLS = []; return s; }
+function ironLayers(heavy, light, fills, gilt){
+  return `<g transform="translate(1.2 2)" opacity=".7">
+      <path d="${heavy}" fill="none" stroke="#000" stroke-width="5.6" stroke-linecap="round"/>
+      <path d="${light}" fill="none" stroke="#000" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"/>
+      <g fill="#000">${fills}${gilt}</g></g>
+    <path d="${heavy}" fill="none" stroke="var(--iron)" stroke-width="4.4" stroke-linecap="round"/>
+    <path d="${light}" fill="none" stroke="var(--iron)" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+    <g fill="var(--iron)" stroke="var(--sheen)" stroke-width=".45">${fills}</g>
+    <path d="${heavy} ${light}" fill="none" stroke="var(--sheen)" stroke-width=".8" stroke-linecap="round" opacity=".55" transform="translate(-.7 -.7)"/>
+    <g fill="#7a6239" stroke="#9a7f4c" stroke-width=".35">${gilt}</g>`;
+}
+
+/* One gate leaf (left; right is mirrored). viewBox 160 × 386 */
+function leafSVG(){
+  const ay = x => 6 + 52*Math.pow(1 - (x-4)/152, 2.1);
+  let rail = 'M4 ' + f(ay(4)); for(let x=8; x<=156; x+=4) rail += ` L${x} ${f(ay(x))}`;
+  const heavy = `${rail} M4 ${f(ay(4))} V384 M156 4 V384 M4 210 C50 196 110 196 156 204 M4 370 H156 M4 384 H156`;
+  const s = ['M151 6 V384'];
+  let fills = '', gilt = '';
+  // two tall ogee loops, each holding a climbing rose vine
+  const t1 = f(ay(44)+1), t2 = f(ay(108)+1);
+  s.push(`M44 ${t1} C12 84 16 162 44 203 C72 162 76 84 44 ${t1}`);
+  s.push(`M108 ${t2} C78 74 82 158 108 200 C134 158 138 74 108 ${t2}`);
+  [[44,+t1],[108,+t2]].forEach(([x,top],k) => {
+    const v = [[x,200],[x-15,166],[x+15,122],[x,top+34]];
+    s.push(cubicStr(v)); fills += vineLeaves(v,6,8.5,k);
+    s.push(`M${x} ${top+34} C${x-6} ${top+44} ${x-12} ${top+40} ${x-10} ${top+32}`);
+    const r = rose(x, top+24, 8); fills += r.iron; gilt += r.gilt;
+    const r2 = rose(x+(k?-9:9), 150, 5); fills += r2.iron; gilt += r2.gilt;
+    fills += bud(x+(k?9:-9), 110, k?30:-30, .8);
+  });
+  // slender scroll stems between the loops and along the meeting edge
+  s.push(scroll('M76 200 C70 186 70 178', 78,166,8,1.3,Math.PI,1));
+  s.push(scroll('M76 20 C70 40 70 70', 78,84,8,1.3,Math.PI,-1));
+  s.push('M77 94 C86 110 68 136 77 156');
+  s.push(scroll('M151 34 C144 40 140 48', 141,60,7,1.3,Math.PI,-1));
+  s.push(scroll('M151 186 C144 182 140 176', 141,164,7,1.3,Math.PI,1));
+  s.push('M141 68 C150 98 132 126 141 156');
+  { const r = rose(77,125,5.5); fills += r.iron; gilt += r.gilt; const r2 = rose(141,112,5); fills += r2.iron; gilt += r2.gilt; }
+  fills += acan(77,112,-110,8) + acan(77,140,-70,8) + acan(141,92,-120,7) + acan(141,134,-60,7);
+  s.push(scroll('M4 160 C12 160 16 154', 16,142,6,1.2,Math.PI/2,1));
+  s.push(scroll('M4 70 C12 70 16 64', 16,54,6,1.2,Math.PI/2,1));
+  // lower panel: big scrolls and acanthus
+  s.push(scroll('M151 362 C140 354 124 336', 106,268,32,1.75,Math.PI/2,-1));
+  s.push(scroll('M4 216 C24 222 40 236', 46,318,22,1.6,-Math.PI/2,1));
+  s.push(scroll('M151 212 C147 214 143 220', 132,228,10,1.4,0,-1));
+  s.push(scroll('M4 360 C14 360 20 352', 22,338,10,1.3,Math.PI/2,1));
+  s.push('M78 296 C68 306 64 318 66 336 C68 350 84 360 96 360');
+  s.push(scroll('M96 360 C104 360 112 354', 112,342,8,1.2,Math.PI/2,-1));
+  fills += acan(76,262,-150,17) + acan(96,232,-70,15) + acan(124,300,40,15) + acan(58,352,-30,14) + acan(24,300,210,13) + acan(140,252,150,11) + acan(70,236,-120,12) + acan(108,326,10,12);
+  fills += acan(100,246,-40,9) + acan(52,300,-150,8);
+  [[62,236,7.5],[130,332,7],[86,346,5.5],[30,262,5]].forEach(([x,y,r]) => { const ro = rose(x,y,r); fills += ro.iron; gilt += ro.gilt; });
+  fills += bud(142,280,20,.9) + bud(20,236,-20,.8) + bud(92,212,10,.8);
+  for(let x=14; x<150; x+=12) s.push(`M${x} 384 C${x} 374 ${x+6} 372 ${x+6} 378`);
+  fills += takeBalls(2.3); gilt += '<rect x="145" y="190" width="11" height="16" rx="1.5"/><circle cx="150.5" cy="198" r="1.6" fill="#2a2018"/>';
+  fills += '<rect x="0" y="60" width="9" height="12" rx="1.5"/><rect x="0" y="320" width="9" height="12" rx="1.5"/>';
+  return `<svg viewBox="0 0 160 386" preserveAspectRatio="none" aria-hidden="true">${ironLayers(heavy, s.join(' '), fills, gilt)}</svg>`;
+}
+
+/* Fixed frame: slim columns, arch, crest, transom. viewBox 460 × 620 */
+function frameSVG(emblem){
+  const heavy = [], light = [];
+  let fills = '', gilt = '';
+  // column (left; mirrored)
+  fills += `<rect x="24" y="580" width="46" height="20" rx="1"/><rect x="20" y="574" width="54" height="6" rx="1"/>
+    <rect x="28" y="528" width="38" height="46"/><rect x="24" y="522" width="46" height="6" rx="1"/><rect x="31" y="378" width="32" height="8" rx="2"/><rect x="33" y="386" width="28" height="3"/>
+    <path d="M33 238 L61 238 L68 216 L26 216Z"/><rect x="18" y="206" width="58" height="10" rx="1"/><rect x="22" y="199" width="50" height="7" rx="1"/>`;
+  const shaft = `<rect x="35" y="238" width="24" height="284" fill="url(#shaftG)" stroke="var(--sheen)" stroke-width=".45"/>` +
+    [40,45,50,55].map(x=>`<line x1="${x}" y1="244" x2="${x}" y2="516" stroke="var(--sheen)" stroke-width=".6" opacity=".45"/>`).join('');
+  light.push('M33 534 H61 V568 H33Z');
+  light.push(scroll('M47 562 C40 562 38 554', 44,548,7,1.3,Math.PI,1));
+  fills += acan(36,234,-110,11) + acan(58,234,-70,11) + acan(47,232,-90,12); gilt += '<rect x="31" y="380" width="32" height="2.4"/><rect x="18" y="210" width="58" height="2"/>';
+  fills += '<rect x="66" y="214" width="4" height="386"/>';
+  // rose vine winding up the column
+  { let cv = 'M47 520'; for(let y=516; y>=244; y-=4) cv += ` L${f(47+11*Math.sin((520-y)/18))} ${y}`; light.push(cv);
+    for(let k=0;k<12;k++){ const y = 508-k*22, x = 47+11*Math.sin((520-y)/18);
+      fills += acan(x, y, k%2 ? -40 : 220, 8);
+      if(k%3===1){ const r = rose(x+(k%2?5:-5), y-6, 4.6); fills += r.iron; gilt += r.gilt; } } }
+  // urn finial on the column
+  fills += '<rect x="37" y="193" width="20" height="6" rx="1"/><path d="M42 193 L52 193 L50.5 187 L43.5 187Z"/><rect x="45.5" y="182" width="3" height="5"/>'
+    + '<path d="M37 182 C37 169 42 163 47 163 C52 163 57 169 57 182Z"/><rect x="38.5" y="160" width="17" height="3.4" rx="1"/>'
+    + '<path d="M41 160 C42 154 45 152 47 152 C49 152 52 154 53 160Z"/><path d="M47 152 L48.8 144 L47 136 L45.2 144Z"/>';
+  light.push('M41 180 C41 172 43 168 45 166 M47 180 V166 M53 180 C53 172 51 168 49 166');
+  // outer brackets
+  light.push(scroll('M35 252 C22 252 10 262', 12,286,11,1.45,-Math.PI/2,-1));
+  light.push(scroll('M35 300 C24 304 16 314', 16,330,9,1.35,-Math.PI/2,1));
+  light.push(scroll('M35 444 C22 444 12 436', 14,414,10,1.4,Math.PI/2,-1));
+  light.push(scroll('M28 552 C14 552 6 544', 9,526,9,1.3,Math.PI/2,1));
+  light.push('M14 600 C6 596 2 588 8 582');
+  fills += acan(22,262,200,12) + acan(20,438,160,11) + acan(10,560,200,10) + acan(24,314,160,9);
+  // arches
+  const outer = [[62,196],[110,166],[180,150],[230,148]], inner = [[70,208],[116,180],[182,162],[230,160]];
+  heavy.push(cubicStr(outer)); light.push(cubicStr(inner)); heavy.push('M70 212 C120 205 180 204 230 208');
+  // crest above the curve: central upright with curls, a big S-scroll, then C-scroll pairs stepping down to the column
+  { const nb = BALLS.length;
+    light.push('M230 148 V66');
+    light.push(scroll('M230 70 C226 62 219 60', 214,68,7,1.35,-Math.PI/2,-1,.84));
+    light.push(scroll('M230 102 C225 96 218 95', 212,103,7,1.3,-Math.PI/2,-1,.84));
+    light.push(scroll('M230 136 C214 136 202 126', 186,104,13,1.4,Math.PI/4,-1,.84));
+    light.push('M186 117 C176 122 172 134 181 148');
+    light.push(scroll('M181 154 C178 140 172 132', 160,128,9,1.35,0,-1,.84));
+    light.push(scroll('M181 154 C186 145 191 140', 200,136,6,1.25,Math.PI,1,.84));
+    light.push(scroll('M136 164 C134 152 130 146', 118,141,8,1.35,0,-1,.84));
+    light.push(scroll('M136 164 C140 157 145 152', 152,149,5,1.2,Math.PI,1,.84));
+    light.push(scroll('M93 180 C92 171 89 167', 80,164,6.5,1.3,0,-1,.84));
+    light.push(scroll('M93 180 C96 175 99 172', 104,170,4.5,1.2,Math.PI,1,.84));
+    BALLS.length = nb; }
+  fills += acan(230,90,-150,9) + acan(230,90,-30,9) + acan(206,132,-140,10) + acan(176,148,-120,9) + acan(132,160,-120,8) + acan(90,176,-115,7);
+  fills += '<path d="M230 66 L232.8 58 L230 50 L227.2 58Z"/>';
+  // tympanum: flowing scrolls, a rose vine and gilded roses
+  light.push(scroll('M215 186 C204 186 196 180', 186,186,7,1.3,-Math.PI/2,-1));
+  light.push(scroll('M172 207 C166 198 158 194', 146,194,7,1.3,0,-1));
+  [[118,196,5.5]].forEach(([x,y,r]) => { const ro = rose(x,y,r); fills += ro.iron; gilt += ro.gilt; });
+  // medallion scrolls around emblem
+  fills += takeBalls(2.2);
+  const half = `<g>${shaft}</g>`;
+  // finial & emblem (centre, drawn once)
+  let centre = '';
+  const cHeavy = 'M230 160 V171';
+  let cFill = '';
+  let cGilt = '';
+  centre += `<circle cx="230" cy="186" r="15.5" fill="#0f0e12" fill-opacity=".55" stroke="var(--iron)" stroke-width="3.2"/><circle cx="230" cy="186" r="12" fill="none" stroke="#8a7044" stroke-width=".8"/>`;
+  const em = emblem === 'star'
+    ? `<polygon points="230,138 233,147.5 242.5,144.5 235.6,151.7 242.5,159 233,156 230,166 227,156 217.5,159 224.4,151.7 217.5,144.5 227,147.5"/>`
+    : [0,120,240].map(a=>`<g transform="translate(230 150) rotate(${a}) translate(0 -8.5) scale(.66)"><path d="M0 12 C-14 2 -11 -12 -3 -10 C-1 -9 0 -6 0 -5 C0 -6 1 -9 3 -10 C11 -12 14 2 0 12Z"/></g>`).join('') + '<path d="M230 154 Q228 162 232 168" fill="none" stroke="var(--gilt)" stroke-width="1.8"/>';
+  const layersHalf = ironLayers(heavy.join(' '), light.join(' '), fills, gilt);
+  return `<svg viewBox="0 0 460 620" preserveAspectRatio="none" aria-hidden="true">
+    <g>${half}${layersHalf}</g>
+    <g transform="translate(460 0) scale(-1 1)">${half}${layersHalf}</g>
+    ${ironLayers(cHeavy, '', cFill, cGilt)}${centre}
+    <g fill="#a3834a" stroke="#c2a46a" stroke-width=".4" transform="translate(230 186) scale(.82) translate(-230 -152)">${em}</g>
+  </svg>`;
+}
+
+/* ---------- Build gates ---------- */
+const leaf = leafSVG();
+document.querySelectorAll('.door').forEach((door) => {
+  door.querySelectorAll('.leaf').forEach(el => el.innerHTML = leaf);
+  door.querySelector('.frame').innerHTML = frameSVG(door.dataset.emblem);
+  const motes = door.querySelector('.motes');
+  let html = '';
+  for(let i=0;i<22;i++){
+    const x = 14 + Math.random()*72, y = 40 + Math.random()*55;
+    html += `<span class="mote" style="left:${f(x)}%;top:${f(y)}%;--d:${f(6+Math.random()*7)}s;--delay:${f(-Math.random()*12)}s;--dx:${f((Math.random()*2-1)*30)}px;${Math.random()<.3?'width:2px;height:2px;':''}"></span>`;
+  }
+  motes.innerHTML = html;
+});
+
+/* Header scroll rule */
+BALLS = [];
+const ruleHalf = [scroll('M150 22 C128 22 112 28', 96,22,13,1.35,0,-1), 'M150 22 H118', scroll('M128 22 C126 12 118 8', 110,11,7,1.2,0,-1)];
+const rb = BALLS.slice(); BALLS = [];
+const rd = ruleHalf.join(' ');
+const rballs = rb.map(([x,y]) => `<circle cx="${f(x)}" cy="${f(y)}" r="1.8"/>`).join('');
+const rLeaves = acan(132,22,200,10);
+document.getElementById('rule').innerHTML = `<g fill="currentColor"><path d="${rd}" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>${rballs}${rLeaves}</g>
+  <g transform="translate(300 0) scale(-1 1)" fill="currentColor"><path d="${rd}" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>${rballs}${rLeaves}</g>
+  <path d="M150 12 L155 22 L150 32 L145 22Z" fill="currentColor"/>`;
+
+/* ---------- Hedge behind the gates ---------- */
+function rng(seed){ return () => (seed = (seed*16807) % 2147483647) / 2147483647; }
+try {
+  const cv = document.createElement('canvas'), W = 1400, H = 760;
+  cv.width = W; cv.height = H;
+  const g = cv.getContext('2d');
+  g.fillStyle = '#0a110c'; g.fillRect(0,0,W,H);
+  const rr = rng(97);
+  for(let layer=0; layer<3; layer++){
+    for(let i=0;i<1100;i++){
+      const x = rr()*W, y = rr()*H*.82, rx = 9+rr()*16, ry = 3.5+rr()*5, a = rr()*Math.PI;
+      const l = 6 + layer*4 + rr()*6, h = 110 + rr()*35, s = 18 + rr()*16;
+      g.save(); g.translate(x,y); g.rotate(a);
+      g.fillStyle = `hsl(${h} ${s}% ${l}%)`;
+      g.beginPath(); g.ellipse(0,0,rx,ry,0,0,Math.PI*2); g.fill();
+      g.strokeStyle = `hsla(${h} ${s}% ${l+7}% / .45)`; g.lineWidth = 1;
+      g.beginPath(); g.moveTo(-rx*.8,0); g.lineTo(rx*.8,0); g.stroke();
+      g.restore();
+    }
+  }
+  const grad = g.createLinearGradient(0,0,0,H);
+  grad.addColorStop(0,'rgba(8,9,11,.9)'); grad.addColorStop(.2,'rgba(8,9,11,.35)'); grad.addColorStop(.6,'rgba(8,9,11,.5)'); grad.addColorStop(1,'rgba(8,9,11,1)');
+  g.fillStyle = grad; g.fillRect(0,0,W,H);
+  document.getElementById('garden').style.backgroundImage = `url(${cv.toDataURL('image/jpeg', .82)})`;
+} catch(e) {}
+})();
+</script>
+
+</body></html>
